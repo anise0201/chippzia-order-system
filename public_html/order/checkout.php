@@ -5,8 +5,63 @@ require("../../includes/functions.inc.php");
 
 customer_login_required();
 
+//check if all info are okay
+$user = retrieveUser($_SESSION["user_data"]["user_id"]) ?? [];
+if (!array_keys_isset_or_not(["user_address", "user_postcode", "user_city",
+    "user_phone", "state_code"], $user)){
+    makeToast("info", "You must fill in all the contact details before you are allowed to order!", "Info");
+    header("Location: /account/profile.php");
+    die();
+}
+$_SESSION["user_data"] = $user;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $postedToken = $_POST["token"];
+    try{
+        if(!empty($postedToken)){
+            if(isTokenValid($postedToken)){
+                $user = retrieveUser($_SESSION["user_data"]["user_id"]);
+                $userID = $user["user_id"];
+                $cart = $_SESSION["cart"];
+                $cost = 0;
+                foreach ($cart as $item){
+                    $quantity = $item["quantity"];
+                    $cost += $item["product"]["product_price"] * $quantity;
+                }
+                $totalCost = $cost + 5;
+                //process
+                $order = createOrder($totalCost, $userID, $cart) or throw new Exception("Something went terribly 
+                wrong during the ordering process!<br>Please contact the administrator!");
+                $_SESSION["orderID"] = $order["order_id"];
+                $_SESSION["totalCost"] = $totalCost;
+            }
+            else{
+                makeToast("warning", "Please refrain from attempting to resubmit previous form", "Warning");
+            }
+        }
+        else {
+            throw new exception("Token not found");
+        }
+    }
+    catch (exception $e){
+        makeToast("error", $e->getMessage(), "Error");
+    }
+
+    header("Location: /order/confirm.php");
+    die();
+}
+
+
 displayToast();
-$cart = $_SESSION["cart"] ?? [];
+
+try{
+    $cart = $_SESSION["cart"] or throw new Exception();
+}catch (Exception) {
+    makeToast("warning", "You cannot checkout with an empty cart!", "Warning");
+    header("Location: /index.php");
+    die();
+}
+
 
 $token = getToken();
 ?>
@@ -35,7 +90,7 @@ $token = getToken();
                         <p>Fill all form field to go to next step</p>
                         <div class="row">
                             <div class="col-md-12 mx-0">
-                                <form id="msform">
+                                <form id="msform" method="post">
                                     <!-- progressbar -->
                                     <ul id="progressbar">
                                         <li class="active"><strong>Cart</strong></li>
@@ -45,9 +100,10 @@ $token = getToken();
                                     <fieldset>
                                         <div class="form-card">
                                             <h2 class="fs-title">Payment Information</h2>
-
+                                            PLACEHOLDER
                                         </div>
-                                        <input type="button" class="action-button float-end" value="Proceed"/>
+                                        <input type="hidden" name="token" value="<?= $token ?>">
+                                        <input type="submit" class="action-button float-end" value="Proceed"/>
                                     </fieldset>
                                 </form>
                             </div>

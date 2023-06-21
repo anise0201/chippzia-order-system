@@ -95,7 +95,9 @@ function retrieveStates() {
 }
 
 function retrieveUser($userID) {
-    $sql = "SELECT us.* FROM users us WHERE us.user_id = ?";
+    $sql = "SELECT us.*, s.* FROM users us 
+            INNER JOIN states s on us.state_code = s.state_code
+            WHERE us.user_id = ?";
 
     $conn = OpenConn();
 
@@ -114,5 +116,28 @@ function retrieveUser($userID) {
 
     makeToast("error", "User doesn't exist or was removed!", "Error");
     header("Location: /logout.php");
-    return null;
+    die();
+}
+
+function updateContact($userID, $contact){
+    $sql = "UPDATE users SET user_address = ?, user_city = ?, user_postcode = ?, state_code = ?, user_phone = ?
+            WHERE user_id = ?";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql, [$contact["address"], $contact["city"], $contact["postcode"],
+                                                $contact["state_code"], $contact["phone"], $userID]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot update user contact!");
+    }
+
+    return false;
 }

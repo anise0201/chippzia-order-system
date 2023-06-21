@@ -43,63 +43,69 @@ $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
                         <span class="h3">Hello there, <?= $name ?? "-" ?></span>
                         <span class="lead">Today is <?= $date ?></span>
                     </div>
-                    <div class="row mt-2 h-100">
-                        <!-- ORDERS-->
-                        <div class="col">
-                            <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
-                                <div class="col">
-                                    <div class="row">
-                                        <span class="fs-2"><?= $ordersCount; ?></span>
-                                    </div>
-                                    <div class="row">
-                                        <span class="text-muted">Orders</span>
-                                    </div>
+
+                </div>
+                <div class="row mt-3 h-100 ms-3">
+                    <!-- ORDERS-->
+                    <div class="col">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
+                            <div class="col">
+                                <div class="row">
+                                    <span class="fs-2"><?= $ordersCount; ?></span>
                                 </div>
-                                <div class="col text-end">
-                                    <i class="bi bi-people-fill icon-yellow-dark h2"></i>
+                                <div class="row">
+                                    <span class="text-muted">Orders</span>
                                 </div>
                             </div>
-                        </div>
-                        <!-- ORDERS LINE-->
-                        <div class="col">
-                            <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
-                                <div class="col">
-                                    <div class="row">
-                                        <span class="fs-2"><?= $ordersLineSum; ?></span>
-                                    </div>
-                                    <div class="row">
-                                        <span class="text-muted">Products Ordered</span>
-                                    </div>
-                                </div>
-                                <div class="col text-end">
-                                    <i class="bi bi-people-fill icon-yellow-dark h2"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- TOTAL SPENT-->
-                        <div class="col w-100">
-                            <div class="shadow p-3 gradient-primary rounded row gx-3">
-                                <div class="col">
-                                    <div class="row">
-                                        <span class="fs-2 text-white">RM<?= $totalSpendDecimal ?></span>
-                                    </div>
-                                    <div class="row">
-                                        <span class="text-white">Total Spent</span>
-                                    </div>
-                                </div>
-                                <div class="col text-end">
-                                    <i class="bi bi-people-fill h2 text-white"></i>
-                                </div>
+                            <div class="col text-end">
+                                <i class="bi bi-people-fill icon-yellow-dark h2"></i>
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="row mt-4 gx-4 ms-3">
+                    <!-- ORDERS LINE-->
                     <div class="col">
                         <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
-                            <div class="row">
-                                <span class="h3">Recent Orders</span>
+                            <div class="col">
+                                <div class="row">
+                                    <span class="fs-2"><?= $ordersLineSum; ?></span>
+                                </div>
+                                <div class="row">
+                                    <span class="text-muted">Products Ordered</span>
+                                </div>
+                            </div>
+                            <div class="col text-end">
+                                <i class="bi bi-people-fill icon-yellow-dark h2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TOTAL SPENT-->
+                    <div class="col align-items-end">
+                        <div class="shadow p-3 gradient-primary rounded row gx-3">
+                            <div class="col">
+                                <div class="row">
+                                    <span class="fs-2 text-white">RM<?= $totalSpendDecimal ?></span>
+                                </div>
+                                <div class="row">
+                                    <span class="text-white">Total Spent</span>
+                                </div>
+                            </div>
+                            <div class="col text-end">
+                                <i class="bi bi-people-fill h2 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-1 gx-4 ms-3">
+                    <div class="col">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <span class="h3">Recent Orders</span>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-outline-primary" href="/account/orders.php">See more..</a>
+                                </div>
                             </div>
                             <div class="row">
                                 <?php

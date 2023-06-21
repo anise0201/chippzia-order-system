@@ -6,9 +6,18 @@ require("../../includes/functions.inc.php");
 customer_login_required();
 
 displayToast();
-$cart = $_SESSION["cart"] ?? [];
+//cart no longer need
+unset($_SESSION["cart"]);
 
-$token = getToken();
+$user = $_SESSION["user_data"];
+$totalCost = $_SESSION["totalCost"];
+$orderID = $_SESSION["orderID"];
+
+$orderCode = sprintf('%08d', $orderID);
+$date = date("d M Y");
+
+$subTotal = number_format(($totalCost - 5), 2, ".", ",");
+$total = number_format(($totalCost), 2, ".", ",");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +52,7 @@ $token = getToken();
                                         <li class="active"><strong>Checkout</strong></li>
                                         <li class="active"><strong>Finish</strong></li>
                                     </ul>
+                                    <!--  invoice-->
                                     <div class="invoice-box bg-white">
                                         <table>
                                             <tr class="top">
@@ -50,13 +60,12 @@ $token = getToken();
                                                     <table>
                                                         <tr>
                                                             <td class="title">
-                                                                <img src="/assets/images/icon2.jpg" style="width: 100%; max-width: 200px" />
+                                                                <img src="/assets/images/icon2.jpg" style="width: 100%; max-width: 200px; object-fit: contain;" />
                                                             </td>
 
                                                             <td>
-                                                                Invoice #: <br />
-                                                                Booking Reference #:
-                                                                Created: <br />
+                                                                Invoice: #<?= $orderCode; ?><br />
+                                                                Created: <?= $date; ?><br />
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -76,9 +85,9 @@ $token = getToken();
                                                             </td>
 
                                                             <td>
-                                                                name<br />
-                                                                email<br />
-                                                                phone
+                                                                <?= ($user["user_fname"] . " " . $user["user_lname"]) ?><br />
+                                                                <?= $user["user_email"] ?><br />
+                                                                <?= $user["phone"] ?? "-" ?>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -102,27 +111,21 @@ $token = getToken();
                                             </tr>
 
                                             <tr class="item">
-                                                <td>Website design</td>
+                                                <td>Subtotal</td>
 
-                                                <td>$300.00</td>
-                                            </tr>
-
-                                            <tr class="item">
-                                                <td>Hosting (3 months)</td>
-
-                                                <td>$75.00</td>
+                                                <td>RM<?= $subTotal ?></td>
                                             </tr>
 
                                             <tr class="item last">
-                                                <td>Domain name (1 year)</td>
+                                                <td>Delivery Cost</td>
 
-                                                <td>$10.00</td>
+                                                <td>RM5.00</td>
                                             </tr>
 
                                             <tr class="total">
                                                 <td></td>
 
-                                                <td>Total: $385.00</td>
+                                                <td>Total: RM<?= $total ?></td>
                                             </tr>
                                         </table>
                                     </div>

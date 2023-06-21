@@ -122,7 +122,7 @@ function isTokenValid($token){
 function array_keys_isset_or_not($keys, $array): bool
 {
     foreach ($keys as $key) {
-        if (!isset($array[$key])) {
+        if (empty($array[$key])) {
             return false;
         }
     }
@@ -152,11 +152,11 @@ function orders_userOrders($orders){
             $price = number_format((float)$orderLine["product_price"], 2, ".", ",");
 
             $orderLineStr .=
-                "<tr>
+                "<tr class='align-middle'>
 <th scope='row'>$count</th>
-<td><img class='img-fluid w-100' src='{$orderLine["product_image"]}'></td>
+<td><img class='img-fluid w-100' src='{$orderLine["product_image"]}' style='max-width: 200px;'></td>
 <td>{$orderLine["product_name"]}</td>
-<td>{$orderLine["quantity"]}</td>
+<td class='text-center'>{$orderLine["quantity"]}</td>
 <td>$dateFormatted</td>
 <td>RM{$price}</td>
                                     </tr>";
@@ -167,11 +167,12 @@ function orders_userOrders($orders){
         //code
         $orderCode = sprintf('%08d', $order["order_id"]);
         $total = number_format((float)$order["order_price"], 2, ".", ",");
+        $statusSmall = strtolower($order["order_status"]);
         echo "
 <div class='row mt-3'>
     <div class='col'><span class='h4'>Order #{$orderCode}</span></div>
     <div class='col text-end'>
-        <span class='h4 {$order["order_status"]}'>{$order["order_status"]}</span>
+        <span class='{$statusSmall}'>{$order["order_status"]}</span>
     </div>
 </div>
 <div class='row'>

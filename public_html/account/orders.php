@@ -29,7 +29,7 @@ $orderCount = retrieveOrderCount()["count"];
             <!-- todo DASHBOARD here  -->
             <div class="container">
                 <div class="row mt-4 gx-4 ms-3">
-                    <div class="shadow p-3 mb-5 bg-body rounded row gx-3" style="height: 300px">
+                    <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
                         <div class="row">
                             <span class="h3"><?= $orderCount ?> order(s)</span>
                         </div>

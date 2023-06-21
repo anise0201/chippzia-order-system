@@ -180,3 +180,67 @@ function retrieveOrderLineCount($orderID) {
 
     return null;
 }
+
+
+function createOrder($order_price, $user_id, $cart){
+    $sqlQueryFirst = "INSERT INTO orders(order_price, user_id) 
+            VALUES (?, ?)";
+    $sqlQueryFirstID = "SET @order_id = LAST_INSERT_ID()";
+
+    $sqlQuerySecond = "INSERT INTO order_lines(order_id, product_id, quantity)
+            VALUES (@order_id, ?, ?)";
+
+    $sqlQuerySelectID = "SELECT @order_id as 'order_id'";
+
+    $conn = OpenConn();
+
+    try {
+        $conn->execute_query($sqlQueryFirst, [$order_price, $user_id]);
+        $conn->query($sqlQueryFirstID);
+
+        foreach ($cart as $item){
+            $quantity = $item["quantity"];
+            $product = $item["product"];
+
+            $conn->execute_query($sqlQuerySecond, [$product["product_id"], $quantity]);
+        }
+
+        $result = $conn->execute_query($sqlQuerySelectID);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        $result = $conn->execute_query($sqlQuerySelectID);
+        $id = mysqli_fetch_assoc($result)["order_id"];
+        deleteOrder($id);
+
+        die("Error: unable to create order!");
+    }
+
+    return null;
+}
+
+function deleteOrder($productID){
+    $sqlQueryFirst = "DELETE FROM orders WHERE order_id = ?";
+    $conn = OpenConn();
+
+    try {
+
+        $result = $conn->execute_query($sqlQueryFirst, [$productID]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to delete order!");
+    }
+
+    return false;
+}

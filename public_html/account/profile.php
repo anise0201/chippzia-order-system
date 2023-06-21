@@ -6,6 +6,44 @@ session_start();
 
 customer_login_required();
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $postedToken = $_POST["token"];
+    try{
+        if(!empty($postedToken)){
+            if(isTokenValid($postedToken)){
+                if (!array_keys_isset_or_not(["address", "postcode", "city", "state", "phone"], $_POST)){
+                    throw new Exception("Values not found!");
+                }
+
+                $contact = ["address"=>htmlspecialchars($_POST["address"]), "postcode"=>htmlspecialchars($_POST["postcode"]),
+                    "city"=>htmlspecialchars($_POST["city"]), "state_code"=>htmlspecialchars($_POST["state"]),
+                    "phone"=>htmlspecialchars($_POST["phone"])];
+                $userID = $_SESSION["user_data"]["user_id"];
+
+                if (updateContact($userID, $contact)){
+                    makeToast('success', "Contact info is successfully updated!", "Success");
+                }
+                else{
+                    throw new Exception("Contact info wasn't able to be updated!");
+                }
+            }
+            else{
+                makeToast("warning", "Please refrain from attempting to resubmit previous form", "Warning");
+            }
+        }
+        else {
+            throw new exception("Token not found");
+        }
+    }
+    catch (exception $e){
+        makeToast("error", $e->getMessage(), "Error");
+    }
+
+    header("Location: /account/profile.php");
+    die();
+}
+
+displayToast();
 $user = retrieveUser($_SESSION["user_data"]["user_id"]);
 $states = retrieveStates();
 $optionStates = "";
@@ -13,6 +51,7 @@ $optionStates = "";
 foreach ($states as $state){
     $optionStates .= "<option value='{$state["state_code"]}'>{$state["state_name"]}</option>";
 }
+$token = getToken();
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,35 +73,36 @@ foreach ($states as $state){
             <div class="container">
                 <div class="row mt-4 gx-4 ms-3">
                     <div class="col-5">
-                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3" style="height: 300px">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
                             <span class="fs-2">Contact Update</span>
                             <div class="mt-2">
                                 <form method="post" action="<?php current_page(); ?>">
                                     <div class="container">
                                         <div class="row">
                                             <div class="col">
-                                                <input type="text" class="form-control" name="address" placeholder="Address">
+                                                <input type="text" class="form-control" name="address" placeholder="Address" required>
                                             </div>
                                             </div>
                                         <div class="row my-2">
                                             <div class="col">
-                                                <input type="text" class="form-control" name="postcode" placeholder="Postcode">
+                                                <input type="text" class="form-control" name="postcode" placeholder="Postcode" required>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="form-control" name="city" placeholder="City">
+                                                <input type="text" class="form-control" name="city" placeholder="City" required>
                                             </div>
                                             <div class="col">
-                                                <select name="state" class="form-select">
+                                                <select name="state" class="form-select" required>
                                                     <?= $optionStates; ?>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col">
-                                                <input type="tel" class="form-control" name="phone" placeholder="Phone Number">
+                                                <input type="tel" class="form-control" name="phone" placeholder="Phone Number" required>
                                             </div>
-                                            </div>
-                                        <button type="submit" class="btn btn-secondary mt-2 float-end text-center">Update</button>
+                                        </div>
+                                        <input type="hidden" name="token" value="<?= $token ?>">
+                                        <button type="submit" class="btn btn-secondary mt-3 float-end text-center">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -132,7 +172,7 @@ foreach ($states as $state){
                                     <span class="fw-bold"><?= $user["user_city"]  ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["status_code"] ?? "-"  ?></span>
+                                    <span class="fw-bold"><?= $user["state_name"] ?? "-"  ?></span>
                                 </div>
                                 <div class="row">
                                     <span class="fw-bold"><?= $user["user_phone"]  ?? "-" ?></span>
