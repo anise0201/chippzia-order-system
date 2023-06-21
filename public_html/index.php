@@ -1,24 +1,25 @@
+<?php
+
+session_start();
+
+require("../includes/functions.inc.php");
+
+displayToast();
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
     <title>Kerepek Funz</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="author" content="">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <?php head_tag_content(); ?>
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- script
     ================================================== -->
-    <script src="js/modernizr.js"></script>
+    <script src="/assets/js/modernizr.js"></script>
   </head>
   <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0" bgcolor=#FF682D>
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -89,8 +90,8 @@
       <symbol xmlns="http://www.w3.org/2000/svg" id="navbar-icon" viewBox="0 0 16 16">
         <path d="M14 10.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5zm0-3a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0 0 1h7a.5.5 0 0 0 .5-.5zm0-3a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0 0 1h11a.5.5 0 0 0 .5-.5z" />
       </symbol>
-    </svg>  
-    
+    </svg>
+
     <header id="header" class="site-header header-scrolled position-fixed text-black bg-light">
       <nav id="header-nav" class="navbar navbar-expand-lg px-3 mb-3">
         <div class="container-fluid">
@@ -101,13 +102,10 @@
           </button>
           <div class="offcanvas offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="bdNavbarOffcanvasLabel">
             <div class="offcanvas-header px-4 pb-0">
-              <a class="navbar-brand" href="index.html">
-                <img src=images/icon.jpg width="30" height="30">
-              </a>
               <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdNavbar"></button>
             </div>
             <div class="offcanvas-body align-item-center">
-				<img src="images/icon2.jpg" width="50" height="50" >
+				<img src="/assets/images/icon2.jpg" width="50" height="50" >
               <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
                 <li class="nav-item">
                   <a class="nav-link me-4 active" href="#billboard">Home</a>
@@ -125,14 +123,14 @@
                   <div class="user-items ps-5">
                     <ul class="d-flex justify-content-end list-unstyled">
                       <li class="pe-3">
-                        <a href="#">
+                        <a href="/login.php">
                           <svg class="user">
                             <use xlink:href="#user"></use>
                           </svg>
                         </a>
                       </li>
                       <li>
-                        <a href="cart.html">
+                        <a href="/cart.php">
                           <svg class="cart">
                             <use xlink:href="#cart"></use>
                           </svg>
@@ -156,12 +154,12 @@
                 <div class="col-md-6">
                   <div class="banner-content">
                     <h1 class="display-2 text-uppercase text-dark pb-5">Greatest Kerepek in History.</h1>
-                    <a href="shop.html" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop Product</a>
+                    <a href="account/shop.php" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop Product</a>
                   </div>
                 </div>
                 <div class="col-md-5">
                   <div class="image-holder">
-                    <img src="images/banner-image.png" alt="banner" width="600" height="600">
+                    <img src="/assets/images/banner-image.png" alt="banner" width="600" height="600">
                   </div>
                 </div>
               </div>
@@ -173,12 +171,12 @@
                 <div class="col-md-6">
                   <div class="banner-content">
                     <h1 class="display-2 text-uppercase text-dark pb-5">The  only Kerepek that valid!</h1>
-                    <a href="shop.html" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop Product</a>
+                    <a href="account/shop.php" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop Product</a>
                   </div>
                 </div>
                 <div class="col-md-5">
                   <div class="image-holder">
-                    <img src="images/banner-image.png" alt="banner" width="600" height="600">
+                    <img src="/assets/images/banner-image.png" alt="banner" width="600" height="600">
                   </div>
                 </div>
               </div>
@@ -256,113 +254,114 @@
       </div>
     </section>
     <section id="mobile-products" class="product-store position-relative padding-large no-padding-top">
-      <div class="container">
-        <div class="row">
-          <div class="display-header d-flex justify-content-between pb-3">
-            <h2 class="display-7 text-dark text-uppercase">Our Special kerepek</h2>
-            <div class="btn-right">
-              <a href="shop.html" class="btn btn-medium btn-normal text-uppercase">Go to Shop</a>
+        <div class="container">
+            <div class="row">
+                <div class="display-header d-flex justify-content-between pb-3">
+                    <h2 class="display-7 text-dark text-uppercase">Our Special kerepek</h2>
+                    <div class="btn-right">
+                        <a href="shop.html" class="btn btn-medium btn-normal text-uppercase">Go to Shop</a>
+                    </div>
+                </div>
+                <div class="swiper product-swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="product-card position-relative">
+                                <div class="image-holder">
+                                    <img src="/assets/images/jejari-ubi (2).jpg" alt="product-item" class="img-fluid">
+                                </div>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a href="/account/shop.php" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                    <h3 class="card-title text-uppercase">
+                                        <a href="#">Jejari Ubi</a>
+                                    </h3>
+                                    <span class="item-price text-primary">RM10</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="product-card position-relative">
+                                <div class="image-holder">
+                                    <img src="/assets/images/kerepek-pedas.jpg" alt="product-item" class="img-fluid">
+                                </div>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a href="/account/shop.php" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                    <h3 class="card-title text-uppercase">
+                                        <a href="#">Kerepek Pedas</a>
+                                    </h3>
+                                    <span class="item-price text-primary">RM10</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="product-card position-relative">
+                                <div class="image-holder">
+                                    <img src="/assets/images/kerepek-pisang.jpg" alt="product-item" class="img-fluid" width="800" height="800">
+                                </div>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a href="/account/shop.php" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                    <h3 class="card-title text-uppercase">
+                                        <a href="#">Kerepek Pisang </a>
+                                    </h3>
+                                    <span class="item-price text-primary">RM10</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="product-card position-relative">
+                                <div class="image-holder">
+                                    <img src="/assets/images/kerepe-kubi.jpg" alt="product-item" class="img-fluid" width="800" height="800" ove>
+                                </div>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a href="/account/shop.php" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                    <h3 class="card-title text-uppercase">
+                                        <a href="#">Kerepek Ubi Original</a>
+                                    </h3>
+                                    <span class="item-price text-primary">RM10</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="product-card position-relative">
+                                <div class="image-holder">
+                                    <img src="/assets/images/kerepek-pedas.jpg" alt="product-item" class="img-fluid" width="800" height="800" style="width: 800; height: 800;">
+                                </div>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a href="/account/shop.php" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                    <h3 class="card-title text-uppercase">
+                                        <a href="#">Kerepek Ubi Pedas</a>
+                                    </h3>
+                                    <span class="item-price text-primary">RM10</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="swiper product-swiper">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <div class="product-card position-relative">
-                  <div class="image-holder">
-                    <img src="images/jejari-ubi (2).jpg" alt="product-item" class="img-fluid">
-                  </div>
-                  <div class="cart-concern position-absolute">
-                    <div class="cart-button d-flex">
-                      <a href="#" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
-                    </div>
-                  </div>
-                  <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
-                    <h3 class="card-title text-uppercase">
-                      <a href="#">Jejari Ubi</a>
-                    </h3>
-                    <span class="item-price text-primary">RM10</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="product-card position-relative">
-                  <div class="image-holder">
-                    <img src="images/kerepek-pedas.jpg" alt="product-item" class="img-fluid">
-                  </div>
-                  <div class="cart-concern position-absolute">
-                    <div class="cart-button d-flex">
-                      <a href="#" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
-                    </div>
-                  </div>
-                  <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
-                    <h3 class="card-title text-uppercase">
-                      <a href="#">Kerepek Pedas</a>
-                    </h3>
-                    <span class="item-price text-primary">RM10</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="product-card position-relative">
-                  <div class="image-holder">
-                    <img src="images/kerepek-pisang.jpg" alt="product-item" class="img-fluid" width="800" height="800">
-                  </div>
-                  <div class="cart-concern position-absolute">
-                    <div class="cart-button d-flex">
-                      <a href="#" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
-                    </div>
-                  </div>
-                  <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
-                    <h3 class="card-title text-uppercase">
-                      <a href="#">Kerepek Pisang </a>
-                    </h3>
-                    <span class="item-price text-primary">RM10</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="product-card position-relative">
-                  <div class="image-holder">
-                    <img src="images/kerepe-kubi.jpg" alt="product-item" class="img-fluid" width="800" height="800" ove> 
-                  </div>
-                  <div class="cart-concern position-absolute">
-                    <div class="cart-button d-flex">
-                      <a href="#" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
-                    </div>
-                  </div>
-                  <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
-                    <h3 class="card-title text-uppercase">
-                      <a href="#">Kerepek Ubi Original</a>
-                    </h3>
-                    <span class="item-price text-primary">RM10</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="product-card position-relative">
-                  <div class="image-holder">
-                    <img src="images/ubi-pedas.jpg" alt="product-item" class="img-fluid" width="800" height="800" style="width: 800; height: 800;">
-                  </div>
-                  <div class="cart-concern position-absolute">
-                    <div class="cart-button d-flex">
-                      <a href="#" class="btn btn-medium btn-black">Add to Cart<svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg></a>
-                    </div>
-                  </div>
-                  <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
-                    <h3 class="card-title text-uppercase">
-                      <a href="#">Kerepek Ubi Pedas</a>
-                    </h3>
-                    <span class="item-price text-primary">RM10</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="swiper-pagination position-absolute text-center"></div>
+        <div class="swiper-pagination position-absolute text-center"></div>
     </section>
-    <section id="yearly-sale" class="bg-light-blue overflow-hidden mt-5 padding-xlarge" style="background-image: url('images/kerepek-bawang-sale.png');background-position: center; background-repeat: no-repeat;">
+    <section id="yearly-sale" class="bg-light-blue overflow-hidden mt-5 padding-xlarge"
+             style="background-image: url('/assets/images/kerepek-bawang-sale.png');background-position: center; background-repeat: no-repeat;">
       <div class="row d-flex flex-wrap align-items-center">
         <div class="col-md-6 col-sm-12">
           <div class="text-content offset-4 padding-medium">
@@ -376,148 +375,11 @@
         </div>
       </div>
     </section>
-    <footer id="footer" class="overflow-hidden">
-      <div class="container">
-        <div class="row">
-          <div class="footer-top-area">
-            <div class="row d-flex flex-wrap justify-content-between">
-              <div class="col-lg-3 col-sm-6 pb-3">
-                <div class="footer-menu">
-                  <p>Kerepek FUNZ</p>
-                  <p>MORE KEREPEK, MORE FUNZ!</p>
-                  <div class="social-links">
-                    <ul class="d-flex list-unstyled">
-                      <li>
-                        <a href="#">
-                          <svg class="facebook">
-                            <use xlink:href="#facebook" />
-                          </svg>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <svg class="instagram">
-                            <use xlink:href="#instagram" />
-                          </svg>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <svg class="twitter">
-                            <use xlink:href="#twitter" />
-                          </svg>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <svg class="linkedin">
-                            <use xlink:href="#linkedin" />
-                          </svg>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <svg class="youtube">
-                            <use xlink:href="#youtube" />
-                          </svg>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-2 col-sm-6 pb-3">
-                <div class="footer-menu text-uppercase">
-                  <h5 class="widget-title pb-2">Quick Links</h5>
-                  <ul class="menu-list list-unstyled text-uppercase">
-                    <li class="menu-item pb-2">
-                      <a href="#">Home</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">About</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Shop</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Blogs</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Contact</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6 pb-3">
-                <div class="footer-menu text-uppercase">
-                  <h5 class="widget-title pb-2">Help & Info Help</h5>
-                  <ul class="menu-list list-unstyled">
-                    <li class="menu-item pb-2">
-                      <a href="#">Track Your Order</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Returns Policies</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Shipping + Delivery</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Contact Us</a>
-                    </li>
-                    <li class="menu-item pb-2">
-                      <a href="#">Faqs</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6 pb-3">
-                <div class="footer-menu contact-item">
-                  <h5 class="widget-title text-uppercase pb-2">Contact Us</h5>
-                  <p>Do you have any queries or suggestions? <a href="mailto:">kerepekfunz@gmail.com</a>
-                  </p>
-                  <p>If you need support? Just give us a call. <a href="">+6012 534 56789</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-    </footer>
-    <div id="footer-bottom">
-      <div class="container">
-        <div class="row d-flex flex-wrap justify-content-between">
-          <div class="col-md-4 col-sm-6">
-            <div class="Shipping d-flex">
-              <p>We ship with:</p>
-              <div class="card-wrap ps-2">
-                <img src="images/dhl.png" alt="visa">
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6">
-            <div class="payment-method d-flex">
-              <p>Payment options:</p>
-              <div class="card-wrap ps-2">
-                <img src="images/visa.jpg" alt="visa">
-                <img src="images/mastercard.jpg" alt="mastercard">
-                <img src="images/paypal.jpg" alt="paypal">
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6">
-            <div class="copyright">
-              <p>© Copyright 2023 Kerepek FUNZ.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="js/jquery-1.11.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="js/plugins.js"></script>
-    <script type="text/javascript" src="js/script.js"></script>
+
+
+    <?php footer() ?>
+    <?php body_script_tag_content(); ?>
+    <script type="text/javascript" src="/assets/js/plugins.js"></script>
+    <script type="text/javascript" src="/assets/js/script.js"></script>
   </body>
 </html>

@@ -1,0 +1,84 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");
+
+
+body{
+
+    background-color: #eee;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+
+
+}
+
+.sidebar {
+    width: 280px;
+}
+
+.icon-red {
+    color: red;
+}
+
+.icon-yellow-dark {
+    color: #c48e12;
+}
+
+.icon-white {
+    color: white;
+}
+
+.gradient-primary {
+    background: rgb(255, 183, 0);
+    background: linear-gradient(rgb(196, 142, 18) 0%, rgb(255, 183, 0) 100%);
+}
+
+@media (max-width: 575px) {
+    .mx-w-100 {
+        width: 100vh !important;
+    }
+}
+
+/* Booking Status */
+.completed {
+    color: #008000; /* Green */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.pending {
+    color: #FFA500; /* Orange */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.refunded {
+    color: #FF0000; /* Red */
+    font-weight: bold;
+    text-decoration: line-through;
+}
+
+.rejected {
+    color: #800080; /* Purple */
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #F5F5F5;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.bg-yellow-dark {
+    background-color: #c48e12 !important;
+}
+
+.bg-yellow-dark:active {
+    background-color: #805b0e !important;
+}
+
+
+.nav-link.link-dark.active {
+    background-color: #c48e12 !important;
+}
+
+.font-lato {
+    font-family: Lato,sans-serif,BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell;
+}
