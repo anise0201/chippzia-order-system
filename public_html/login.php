@@ -8,6 +8,7 @@ customer_forbidden();
 // check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+
     $username = filter_var($_POST["username"], FILTER_SANITIZE_SPECIAL_CHARS);
     $password = filter_var($_POST["password"], FILTER_SANITIZE_SPECIAL_CHARS);
 
@@ -60,7 +61,7 @@ displayToast();
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Login</button>
                             </div>
-                            <div class="text-center">
+                            <div class="text-center mt-2">
                                 <span>Don't have an account? <a class="text-decoration-none" href="/register.php">Register now!</a></span>
                             </div>
                         </form>

@@ -19,12 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 //loop thru cart (see if duplicates exists)
                 $duplicateItem = null;
-                for ($i = 0, $n = count($cart); $i < $n; $i++){
-                    $item = $cart[$i];
+                foreach ($cart as $itemKey => $itemValue){
                     //match
-                    if ($item["product"]["product_id"] == $product["product_id"]){
-                        $duplicateItem = $item;
-                        unset($cart[$i]);
+                    if ($itemValue["product"]["product_id"] == $product["product_id"]){
+                        $duplicateItem = $itemValue;
+                        unset($cart[$itemKey]);
                         break;
                     }
                 }
@@ -109,7 +108,7 @@ displayToast();
                                     }
                                     $count++;
                                     echo "
-                                <div class='col-md-3 p-1 h-100'>
+                                <div class='col-md-3 p-1'>
                                     <div class='align-middle text-center'>
                                           <div class='card p-3'>
                                             <img src='{$product["product_image"]}' class='card-img-top' alt='Product Image'>

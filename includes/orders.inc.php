@@ -6,7 +6,7 @@ require_once("functions.inc.php");
 
 //todo create, delete select orders
 
-
+//orders (user)
 function retrieveAllUserOrders($userID) {
     $sql = "SELECT * FROM orders WHERE user_id = ?";
 
@@ -49,7 +49,54 @@ function retrieveAllUserOrders5LIMIT($userID) {
     return null;
 }
 
+//orders (admin)
+function retrieveAllOrders() {
+    $sql = "SELECT o.*, u.* FROM orders o
+            INNER JOIN users u on o.user_id = u.user_id";
 
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to retrieve orders!");
+    }
+
+    return null;
+}
+
+function retrieveAllOrders5LIMIT() {
+    $sql = "SELECT o.*, u.* FROM orders o
+            INNER JOIN users u on o.user_id = u.user_id
+            ORDER BY date_created DESC
+            LIMIT 5";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to retrieve orders!");
+    }
+
+    return null;
+}
+
+// order count (admin)
 function retrieveOrderCount() {
     $sql = "SELECT COUNT(o.order_id) as 'count' FROM orders o";
 
@@ -71,6 +118,7 @@ function retrieveOrderCount() {
     return null;
 }
 
+//order count (user)
 function retrieveOrderCountUser($userID) {
     $sql = "SELECT COUNT(o.order_id) as 'count' FROM orders o WHERE o.user_id = ?";
 
@@ -224,13 +272,13 @@ function createOrder($order_price, $user_id, $cart){
     return null;
 }
 
-function deleteOrder($productID){
+function deleteOrder($orderID){
     $sqlQueryFirst = "DELETE FROM orders WHERE order_id = ?";
     $conn = OpenConn();
 
     try {
 
-        $result = $conn->execute_query($sqlQueryFirst, [$productID]);
+        $result = $conn->execute_query($sqlQueryFirst, [$orderID]);
         CloseConn($conn);
 
         if ($result) {
@@ -243,4 +291,68 @@ function deleteOrder($productID){
     }
 
     return false;
+}
+
+function updateOrder($orderID, $orderStatus){
+    $sql= "UPDATE orders SET order_status = ? 
+            WHERE order_id = ?";
+    $conn = OpenConn();
+
+    try {
+
+        $result = $conn->execute_query($sql, [$orderStatus, $orderID]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to update order!");
+    }
+
+    return false;
+}
+
+function retrieveIncome() {
+    $sql = "SELECT SUM(order_price) as 'sum' FROM orders WHERE order_status = 'COMPLETED'";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the income!");
+    }
+    return null;
+}
+
+//retrieve product bought total
+function retrieveAllProductBought() {
+    $sql = "SELECT SUM(quantity) as 'sum' FROM order_lines";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to retrieve product bought count!");
+    }
+
+    return null;
 }

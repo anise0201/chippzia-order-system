@@ -121,7 +121,7 @@ function admin_header_bar($pageName){
                 </span>
             </div>
             <div class='navbar-nav ms-auto order-las'>
-                <form class='d-flex' role='search'>
+                <form class='d-flex' role='search' action='/admin/search.php'>
                     <input class='form-control me-2' type='search' name='q' placeholder='Search' aria-label='Search'>
                     <button class='btn btn-outline-success' type='submit'>Search</button>
                 </form>
@@ -138,11 +138,11 @@ function admin_side_bar() {
         <div class='row gx-3'>
             <div class='col-5'>
                 <a href='/' class='d-flex align-items-center me-md-auto link-dark text-decoration-none'>
-                    <img class='me-2' width='150' height='73' src='/assets/img/airasiacom_logo.svg'>
+                    <img class='me-2' width='150' height='73' src='/assets/images/icon2.jpg'>
                 </a>
             </div>
             <div class='col d-sm-none'>
-                <a data-bs-target='#sidebar' data-bs-toggle='collapse' class='p-3 text-black'><i class='bi bi-x-lg'></i></a>
+                <button data-bs-target='#sidebar' data-bs-toggle='collapse' type='button' class='btn-close'></button>
             </div>
         </div>
         
@@ -161,15 +161,15 @@ function admin_side_bar() {
                 </a>
             </li>
             <li>
-                <a href='/admin/manage-flights.php' class='nav-link link-dark'>
-                    <i class='bi bi-airplane me-2 $iconSize'></i>
-                    Flight
+                <a href='/admin/manage-orders.php' class='nav-link link-dark'>
+                    <i class='bi bi-cart-check me-2 $iconSize'></i>
+                    Orders
                 </a>
             </li>
             <li>
-                <a href='/admin/manage-bookings.php' class='nav-link link-dark'>
-                    <i class='bi bi-calendar me-2 $iconSize'></i>
-                    Bookings
+                <a href='/admin/manage-products.php' class='nav-link link-dark'>
+                    <i class='bi bi-box-seam me-2 $iconSize'></i>
+                    Products
                 </a>
             </li>
             <li>
@@ -182,13 +182,10 @@ function admin_side_bar() {
         <hr>
         <div class='dropdown'>
             <a href='#' class='d-flex align-items-center link-dark text-decoration-none dropdown-toggle' id='dropdownUser2' data-bs-toggle='dropdown' aria-expanded='false'>
-                <img src='/assets/img/default-profile.php.svg' alt='' width='32' height='32' class='rounded-circle me-2'>
+                <img src='/assets/images/default-profile.svg' alt='' width='32' height='32' class='rounded-circle me-2'>
                 <strong>{$_SESSION["user_data"]["username"]}</strong>
             </a>
             <ul class='dropdown-menu text-small shadow' aria-labelledby='dropdownUser2'>
-                <li><a class='dropdown-item' href='/admin/profile.php.php'>Settings</a></li>
-                <li><a class='dropdown-item' href='/admin/dashboard.php'>Profile</a></li>
-                <li><hr class='dropdown-divider'></li>
                 <li><a class='dropdown-item' href='/logout.php'>Log out</a></li>
             </ul>
         </div>

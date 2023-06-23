@@ -7,7 +7,7 @@ session_start();
 customer_login_required();
 
 $orders = retrieveAllUserOrders($_SESSION["user_data"]["user_id"]);
-$orderCount = retrieveOrderCount()["count"];
+$orderCount = retrieveOrderCountUser($_SESSION["user_data"]["user_id"])["count"];
 
 ?>
 <!DOCTYPE html>

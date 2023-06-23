@@ -3,17 +3,18 @@
 require_once("functions.inc.php");
 /* USER RELATED */
 //create customer/admin
-function createUser($username, $password, $email, $user_type) {
+function createUser($fname, $lname, $username, $password, $email, $user_type) {
     if (!($user_type == "customer" || $user_type == "admin")) {
         die("Invalid user type");
     }
 
     $conn = OpenConn();
-    $sql = "INSERT INTO users(username, password, user_email, user_type) 
-            VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO users(username, password, user_fname, user_lname, user_email, user_type) 
+            VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
-        if ($conn->execute_query($sql, [$username, password_hash($password, PASSWORD_DEFAULT), $email, $user_type])){
+        if ($conn->execute_query($sql, [$username, password_hash($password, PASSWORD_DEFAULT), $fname, $lname,
+                                        $email, $user_type])){
             CloseConn($conn);
             return true;
         }
@@ -27,32 +28,29 @@ function createUser($username, $password, $email, $user_type) {
     return false;
 }
 //check user exists
-function checkUser($username): bool
+function checkUser($username, $email): bool
 {
-    $sql = "SELECT * FROM users WHERE username = ?";
+    $sql = "SELECT * FROM users WHERE username = ? OR user_email = ?";
     $conn = OpenConn();
 
-    $result = $conn->execute_query($sql, [$username]);
-    CloseConn($conn);
+    try {
+        $result = $conn->execute_query($sql, [$username, $email]);
+        CloseConn($conn);
 
-    if (mysqli_num_rows($result) > 0) {
-        return true;
+        if (mysqli_num_rows($result) > 0) {
+            return true;
+        }
+    }
+    catch(mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: cannot get the user!");
     }
     return false;
 }
 
 function returnUserType($userID){
-    $sql = "SELECT * FROM users WHERE user_id = ?";
-    $conn = OpenConn();
-
-    $result = $conn->execute_query($sql, [$userID]);
-    CloseConn($conn);
-
-    if (mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        return $row["user_type"];
-    }
-    return null;
+    $user = $_SESSION["user_data"];
+    return $user["user_type"];
 }
 
 //verify user (return customer/admin)
@@ -119,12 +117,35 @@ function retrieveUser($userID) {
     die();
 }
 
+function retrieveUserSimple($userID) {
+    $sql = "SELECT us.* FROM users us 
+            WHERE us.user_id = ?";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql, [$userID]);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user!");
+    }
+
+    makeToast("error", "User doesn't exist or was removed!", "Error");
+    header("Location: /logout.php");
+    die();
+}
+
 function updateContact($userID, $contact){
     $sql = "UPDATE users SET user_address = ?, user_city = ?, user_postcode = ?, state_code = ?, user_phone = ?
             WHERE user_id = ?";
 
     $conn = OpenConn();
-
     try{
         $result = $conn->execute_query($sql, [$contact["address"], $contact["city"], $contact["postcode"],
                                                 $contact["state_code"], $contact["phone"], $userID]);
@@ -141,3 +162,124 @@ function updateContact($userID, $contact){
 
     return false;
 }
+
+//admin
+function retrieveCountUsers() {
+    $sql = "SELECT COUNT(user_id) as 'count' FROM users";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user count!");
+    }
+    return null;
+}
+function retrieveCountAdminUsers() {
+    $sql = "SELECT COUNT(user_id) as 'count' FROM users  WHERE user_type = 'admin'";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user admin count!");
+    }
+    return null;
+}
+function retrieveCountCustomerUsers() {
+    $sql = "SELECT COUNT(user_id) as 'count' FROM users WHERE user_type = 'customer'";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user customer count!");
+    }
+    return null;
+}
+function retrieveAllAdminUsers() {
+    $sql = "SELECT * FROM users WHERE user_type = 'admin'";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user admins!");
+    }
+    return null;
+}
+
+function retrieveAllCustomerUsers() {
+    $sql = "SELECT u.*, s.state_name FROM users u 
+         INNER JOIN states s on u.state_code = s.state_code
+         WHERE user_type = 'customer'";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user customers!");
+    }
+    return null;
+}
+
+function deleteUser($userID) {
+    $sql = "DELETE FROM users WHERE user_id = ?";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql, [$userID]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the user customers!");
+    }
+    return false;
+}
+

@@ -6,7 +6,7 @@ require("../../includes/functions.inc.php");
 customer_login_required();
 
 //check if all info are okay
-$user = retrieveUser($_SESSION["user_data"]["user_id"]) ?? [];
+$user = $_SESSION["user_data"];
 if (!array_keys_isset_or_not(["user_address", "user_postcode", "user_city",
     "user_phone", "state_code"], $user)){
     makeToast("info", "You must fill in all the contact details before you are allowed to order!", "Info");

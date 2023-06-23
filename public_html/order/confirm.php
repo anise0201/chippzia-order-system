@@ -40,12 +40,12 @@ $total = number_format(($totalCost), 2, ".", ",");
             <!-- todo DASHBOARD here  -->
             <div class="container mt-3">
                 <div class="row justify-content-center">
-                    <div class="col-lg-8 me-3 mt-3 mb-5">
+                    <div class="col-lg-12 me-3 mt-3 mb-5">
                         <h2><strong>Thanks for shopping with Kerepek Funz</strong></h2>
                         <p>We hope you'll order again from us!</p>
                         <div class="row">
                             <div class="col-md-12 mx-0">
-                                <form id="msform">
+                                <div id="msform">
                                     <!-- progressbar -->
                                     <ul id="progressbar">
                                         <li class="active"><strong>Cart</strong></li>
@@ -87,7 +87,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                             <td>
                                                                 <?= ($user["user_fname"] . " " . $user["user_lname"]) ?><br />
                                                                 <?= $user["user_email"] ?><br />
-                                                                <?= $user["phone"] ?? "-" ?>
+                                                                <?= $user["user_phone"] ?? "-" ?>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -129,7 +129,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                             </tr>
                                         </table>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>

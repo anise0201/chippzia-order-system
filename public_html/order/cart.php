@@ -15,10 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $cart = $_SESSION["cart"] ?? [];
 
                 $itemExist = false;
-                for($i = 0, $n = count($cart); $i < $n; $i++){
-                    $item = $cart[$i];
-                    if ($item["product"]["product_id"] == $productID){
-                        unset($cart[$i]);
+
+                foreach ($cart as $itemKey => $itemValue) {
+                    if ($itemValue["product"]["product_id"] == $productID){
+                        unset($cart[$itemKey]);
                         $itemExist = true;
                         break;
                     }
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    header("Location: /account/cart.php");
+    header("Location: /order/cart.php");
     die();
 }
 
@@ -69,7 +69,7 @@ $token = getToken();
             <div class="container">
                 <div class="row mt-4 gx-4 ms-3">
                     <div class="shadow p-3 mb-3 bg-body rounded col-lg-8  me-3">
-                        <div class="row">
+                        <div class="ro mb-2">
                             <span class="h3">My Shopping Cart</span>
                         </div>
                         <div class="container">
@@ -102,7 +102,7 @@ $token = getToken();
             <p class='card-text'>Price: RM{$productCost}</p>
             
             <span class='card-detail'>Quantity: {$quantity}</span>
-            <form action='/account/cart.php' method='post'>     
+            <form action='/order/cart.php' method='post'>     
                 <input type='hidden' name='product_id' value='{$product["product_id"]}'>
                 <input type='hidden' name='token' value='$token'>
                 <button type='submit' class='btn btn-dark text-white float-end'><i class='bi bi-trash'></i> Remove from Cart</button>
@@ -120,6 +120,9 @@ $token = getToken();
                                         echo "</div>";
                                     }
                                 }
+                                else {
+                                    echo "<span class='text-center fs-4 mt-2'>No item</span>";
+                                }
                                 ?>
                             </div>
                         </div>
@@ -133,7 +136,8 @@ $token = getToken();
                         <div class="row my-2">
                             <?php
                             $subTotal = number_format((float)$cost, 2, ".", ",");
-                            $delivery = 5;
+                            $delivery = $subTotal > 0 ? 5 : 0;
+                            $deliveryStr = number_format((float)$delivery, 2, ".", ",");
                             $total = $cost + $delivery;
                             $total = number_format((float)$total, 2, ".", ",");
                             ?>
@@ -150,7 +154,7 @@ $token = getToken();
                                     <span>RM<?= $subTotal?></span>
                                 </div>
                                 <div class="row">
-                                    <span>RM5.00</span>
+                                    <span>RM<?= $deliveryStr ?></span>
                                 </div>
                             </div>
                             <hr class="m-1">

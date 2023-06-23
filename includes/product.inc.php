@@ -69,3 +69,46 @@ function retrieveProduct($productID) {
 
     return null;
 }
+
+function deleteProduct($productID){
+    $sql = "DELETE FROM products WHERE product_id = ?";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql, [$productID]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to delete product!");
+    }
+
+    return false;
+}
+
+function createProduct($productName, $productCode, $productImage, $productPrice) {
+    $sql = "INSERT INTO products(product_name, product_code, product_image, product_price) 
+            VALUES (?, ?, ?, ?)";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql, [$productName, $productCode, $productImage, $productPrice]);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to create product!");
+    }
+
+    return false;
+}

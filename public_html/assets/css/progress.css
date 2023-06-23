@@ -44,7 +44,7 @@
     -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    border: 1px solid #ee0979;
+    border: 1px solid #ffb700;
     outline-width: 0;
     transition: All 0.5s ease-in;
     -webkit-transition: All 0.5s ease-in;
@@ -55,7 +55,7 @@
 /*buttons*/
 #msform .action-button {
     width: 100px;
-    background: #ee0979;
+    background: #ffb700;
     font-weight: bold;
     color: white;
     border: 0 none;
@@ -66,7 +66,7 @@
 }
 
 #msform .action-button:hover, #msform .action-button:focus {
-    box-shadow: 0 0 0 2px white, 0 0 0 3px #ee0979;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #ffb700;
 }
 
 #msform .action-button-previous {
@@ -155,7 +155,7 @@
 /*marking active/completed steps green*/
 /*The number of the step and the connector before it = green*/
 #progressbar li.active:before, #progressbar li.active:after {
-    background: #ee0979;
+    background: #ffb700;
     color: white;
 }
 
@@ -168,7 +168,7 @@
 .dme_link a {
     background: #FFF;
     font-weight: bold;
-    color: #ee0979;
+    color: #ffb700;
     border: 0 none;
     border-radius: 25px;
     cursor: pointer;
