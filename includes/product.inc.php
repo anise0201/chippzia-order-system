@@ -112,3 +112,25 @@ function createProduct($productName, $productCode, $productImage, $productPrice)
 
     return false;
 }
+
+function retrieveAllProductLike($query) {
+    $sql = "SELECT * FROM products p WHERE p.product_code LIKE ? or p.product_name LIKE ?";
+    $query = "%{$query}%";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql, [$query, $query]);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to retrieve products like!");
+    }
+
+    return null;
+}

@@ -8,6 +8,7 @@ function head_tag_content(): void
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ' crossorigin='anonymous'>
     <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js' integrity='sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe' crossorigin='anonymous'></script>
+     <script src='https://code.jquery.com/jquery-3.7.0.min.js' integrity='sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=' crossorigin='anonymous'></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css' integrity='sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==' crossorigin='anonymous' referrerpolicy='no-referrer' />
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css'>
     <link rel='stylesheet' href='/assets/css/style.css'>
@@ -17,7 +18,6 @@ function head_tag_content(): void
 
 function body_script_tag_content() {
     echo "
-    <script src='https://code.jquery.com/jquery-3.7.0.min.js' integrity='sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=' crossorigin='anonymous'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js' integrity='sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==' crossorigin='anonymous' referrerpolicy='no-referrer'></script>
     <script src='https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js'></script>
     <script src='/assets/js/main.js'></script>
@@ -36,7 +36,7 @@ function header_bar($pageName){
                 </span>
             </div>
             <div class='navbar-nav ms-auto order-las'>
-                <form class='d-flex' role='search'>
+                <form class='d-flex' role='search' action='/account/search.php'>
                     <input class='form-control me-2' type='search' name='q' placeholder='Search' aria-label='Search'>
                     <button class='btn btn-outline-success' type='submit'>Search</button>
                 </form>
@@ -123,7 +123,7 @@ function admin_header_bar($pageName){
             <div class='navbar-nav ms-auto order-las'>
                 <form class='d-flex' role='search' action='/admin/search.php'>
                     <input class='form-control me-2' type='search' name='q' placeholder='Search' aria-label='Search'>
-                    <button class='btn btn-outline-success' type='submit'>Search</button>
+                    <button class='btn btn-outline-warning' type='submit'>Search</button>
                 </form>
             </div>
         </div>
@@ -294,7 +294,7 @@ function footer(){
               <div class='col-lg-3 col-sm-6 pb-3'>
                 <div class='footer-menu contact-item'>
                   <h5 class='widget-title text-uppercase pb-2'>Contact Us</h5>
-                  <p>Do you have any queries or suggestions? <a href='mailto:'>kerepekfunz@gmail.com</a>
+                  <p>Do you have any queries or suggestions? <a href='mailto:'>kerepekfunz5@gmail.com</a>
                   </p>
                   <p>If you need support? Just give us a call. <a href=''>+6012 534 56789</a>
                   </p>

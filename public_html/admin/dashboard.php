@@ -95,7 +95,7 @@ displayToast();
                                     <span class="fs-2"><?= $productBought; ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="text-muted">Products Bought</span>
+                                    <span class="text-muted">Products Sold</span>
                                 </div>
                             </div>
                             <div class="col text-end">

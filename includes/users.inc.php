@@ -283,3 +283,24 @@ function deleteUser($userID) {
     return false;
 }
 
+function retrieveAllUserLike($query) {
+    $sql = "SELECT * FROM users u WHERE u.user_fname LIKE ? OR u.user_lname LIKE ? OR u.username LIKE ?";
+    $query = "%{$query}%";
+
+    $conn = OpenConn();
+
+    try {
+        $result = $conn->execute_query($sql, [$query, $query, $query]);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+    catch (mysqli_sql_exception){
+        createLog($conn->error);
+        die("Error: unable to retrieve users like!");
+    }
+
+    return null;
+}
