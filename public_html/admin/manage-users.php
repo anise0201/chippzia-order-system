@@ -100,13 +100,13 @@ $token = getToken();
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Registration</th>
-                                        <th scope="col" class="text-center">Action</th>
+                                        <th scope="col" class="text-center col-1">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php
-                                    admin_displayAdminUsers($adminUsers);
-                                    ?>
+                                        <?php
+                                        admin_displayAdminUsers($adminUsers);
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -122,12 +122,12 @@ $token = getToken();
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Username</th>
-                                        <th scope="col">Full Name</th>
-                                        <th scope="col">Address</th>
+                                        <th scope="col" class="col-2">Full Name</th>
+                                        <th scope="col" class="col-2">Address</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Phone</th>
                                         <th scope="col">Registration</th>
-                                        <th scope="col" class="text-center">Action</th>
+                                        <th scope="col" class="text-center" style="width: 10%">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>

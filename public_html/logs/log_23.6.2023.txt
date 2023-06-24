@@ -1,0 +1,5 @@
+
+Cannot add or update a child row: a foreign key constraint fails (`kerepek-funz-sales-system`.`orders`, CONSTRAINT `FK_STATUS` FOREIGN KEY (`order_status`) REFERENCES `order_statuses` (`order_status`))
+Cannot add or update a child row: a foreign key constraint fails (`kerepek-funz-sales-system`.`orders`, CONSTRAINT `FK_STATUS` FOREIGN KEY (`order_status`) REFERENCES `order_statuses` (`order_status`))
+Cannot delete or update a parent row: a foreign key constraint fails (`kerepek-funz-sales-system`.`order_lines`, CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`))
+Cannot delete or update a parent row: a foreign key constraint fails (`kerepek-funz-sales-system`.`order_lines`, CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`))

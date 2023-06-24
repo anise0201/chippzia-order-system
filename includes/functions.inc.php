@@ -246,7 +246,7 @@ function orders_adminOrders($orders) {
                 <span class='{$statusSmall}'>{$order["order_status"]}</span>
             </div>
             <div class='col'>
-               <form method='post' action='/admin/manage-orders.php'>
+               <form method='post' id='{$order["order_id"]}' action='/admin/manage-orders.php'>
                <div class='row offset-1'>
                     <div class='col'>
                         <input type='hidden' name='order_id' value='{$order["order_id"]}'>
@@ -254,7 +254,7 @@ function orders_adminOrders($orders) {
                     </div>
                     <div class='col'>
                         <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                        <a type='button'data-bs-toggle='modal' data-bs-target='#updateStatic' onclick='updateModal({$order["order_id"]}}, \"modal-btn-update\");' class='btn btn-outline-primary'>
+                        <a type='button' data-bs-toggle='modal' data-bs-target='#updateStatic' onclick='updateModal({$order["order_id"]}, \"modal-btn-update\");' class='btn btn-outline-primary'>
                         Update</a>
                     </div>
                 </div>
@@ -264,8 +264,8 @@ function orders_adminOrders($orders) {
             <div class='col-1 mt-2'>
                 <form action='/admin/manage-orders.php' id='{$order["order_id"]}' method='post'>
                     <input type='hidden' name='order_id' value='{$order["order_id"]}'>
-                    <a data-bs-toggle='modal' data-bs-target='#deleteStatic' onclick='updateModal({$order["order_id"]}}, \"modal-btn-delete\");' class='h4'>
                     <input type='hidden' name='token' value='{$_SESSION["token"]}'>
+                    <a type='button' data-bs-toggle='modal' data-bs-target='#deleteStatic' onclick='updateModal({$order["order_id"]}, \"modal-btn-delete\");' class='h4'>
                     <i class='bi bi-trash'></i></a>
                 </form>    
             </div> 
@@ -362,14 +362,21 @@ function admin_displayAdminUsers($adminUsers) {
                 <td>{$fullName}</td>
                 <td>{$user["user_email"]}</td>
                 <td>{$dateFormatted}</td>
-                <td class='text-center'>
-                    <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
-                        <input type='hidden' name='user_id' value='{$user["user_id"]}'>
-                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' 
-                        onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
-                        <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                        <i class='bi bi-trash'></i></a>
-                    </form> 
+                <td class='position-relative text-center align-middle'>
+                    <div class='position-absolute top-50 start-0 translate-middle-y'>
+                        <a type='button' class='h4' href='mailto:{$user["user_email"]}'>
+                        <i class='bi bi-envelope'></i></a>
+                    </div>
+                    <div class='position-absolute top-50 end-0 translate-middle-y'>
+                        <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
+                            <input type='hidden' name='user_id' value='{$user["user_id"]}'>
+                            <a type='button' data-bs-toggle='modal' data-bs-target='#static' 
+                            onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
+                            <input type='hidden' name='token' value='{$_SESSION["token"]}'>
+                            <i class='bi bi-trash'></i></a>
+                        </form> 
+                    </div>
+                    
                 </td>
             </tr>";
             $count++;
@@ -398,13 +405,24 @@ function admin_displayCustomerUsers($customerUsers) {
                 <td>{$user["user_email"]}</td>
                 <td>{$phone}</td>
                 <td>{$dateFormatted}</td>
-                <td class='text-center'>
-                    <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
-                        <input type='hidden' name='user_id' value='{$user["user_id"]}'>
-                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
-                        <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                        <i class='bi bi-trash'></i></a>
-                    </form>    
+                <td class='position-relative text-center align-middle'>
+                    <div class='position-absolute top-50 start-0 translate-middle-y'>
+                        <a type='button' class='h4' href='mailto:{$user["user_email"]}'>
+                        <i class='bi bi-envelope'></i></a>
+                    </div>
+                    <div class='position-absolute top-50 start-50 translate-middle'>
+                        <a type='button' class='h5' href='https://wa.me/{$phone}'>
+                        <i class='bi bi-whatsapp'></i></a>
+                    </div>
+                    <div class='position-absolute top-50 end-0 translate-middle-y'>
+                        <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
+                            <input type='hidden' name='user_id' value='{$user["user_id"]}'>
+                            <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
+                            <i class='bi bi-trash'></i></a>
+                            <input type='hidden' name='token' value='{$_SESSION["token"]}'>
+                        </form> 
+                    </div>
+                       
                 </td>
             </tr>";
             $count++;

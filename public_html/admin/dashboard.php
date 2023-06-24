@@ -37,8 +37,8 @@ displayToast();
             <div class="container">
                 <div class="row mt-4 gx-4 ms-3">
                     <!-- USER COUNT -->
-                    <div class="col">
-                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
+                    <div class="col ">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
                                     <span class="fs-2"><?= $userCount; ?></span>
@@ -55,7 +55,7 @@ displayToast();
 
                     <!-- ORDERS COUNT -->
                     <div class="col">
-                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
                                     <span class="fs-2"><?= $ordersCount; ?></span>
@@ -65,14 +65,14 @@ displayToast();
                                 </div>
                             </div>
                             <div class="col text-end">
-                                <i class="bi bi-calendar2-check-fill icon-yellow-dark h2"></i>
+                                <i class="bi bi-cart-fill icon-yellow-dark h2"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- PRODUCT COUNT -->
                     <div class="col">
-                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
                                     <span class="fs-2"><?= $productCount; ?></span>
@@ -82,14 +82,31 @@ displayToast();
                                 </div>
                             </div>
                             <div class="col text-end">
-                                <i class="bi bi-airplane-fill icon-yellow-dark h2"></i>
+                                <i class="bi bi-box-seam-fill icon-yellow-dark h2"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT COUNT COUNT -->
+                    <div class="col">
+                        <div class="shadow p-3 mb-5 bg-body rounded row gx-3 h-75">
+                            <div class="col">
+                                <div class="row">
+                                    <span class="fs-2"><?= $productBought; ?></span>
+                                </div>
+                                <div class="row">
+                                    <span class="text-muted">Products Bought</span>
+                                </div>
+                            </div>
+                            <div class="col text-end">
+                                <i class="bi bi-basket-fill icon-yellow-dark h2"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- INCOME -->
-                    <div class="col-4">
-                        <div class="shadow p-3 mb-5 gradient-primary rounded row gx-3">
+                    <div class="col-3">
+                        <div class="shadow p-3 mb-5 gradient-primary rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
                                     <span class="fs-2 text-white">RM<?= $incomeDecimal; ?></span>

@@ -208,28 +208,6 @@ function retrieveAllOrderLines($orderID) {
     return null;
 }
 
-function retrieveOrderLineCount($orderID) {
-    $sql = "SELECT COUNT(o.order_line_id) as 'count' FROM order_lines o";
-
-    $conn = OpenConn();
-
-    try {
-        $result = $conn->execute_query($sql, [$orderID]);
-        CloseConn($conn);
-
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
-        }
-    }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve orders lines count!");
-    }
-
-    return null;
-}
-
-
 function createOrder($order_price, $user_id, $cart){
     $sqlQueryFirst = "INSERT INTO orders(order_price, user_id) 
             VALUES (?, ?)";
@@ -337,7 +315,8 @@ function retrieveIncome() {
 
 //retrieve product bought total
 function retrieveAllProductBought() {
-    $sql = "SELECT SUM(quantity) as 'sum' FROM order_lines";
+    $sql = "SELECT SUM(ol.quantity) as 'sum' FROM order_lines ol
+            INNER JOIN orders o on ol.order_id = o.order_id AND o.order_status = 'COMPLETED'";
 
     $conn = OpenConn();
 
@@ -354,5 +333,27 @@ function retrieveAllProductBought() {
         die("Error: unable to retrieve product bought count!");
     }
 
+    return null;
+}
+
+function retrieveOrderSpecific($orderID) {
+    $sql = "SELECT o.*, u.* FROM orders o
+            INNER JOIN users u on o.user_id = u.user_id
+            WHERE o.order_id = ?";
+
+    $conn = OpenConn();
+
+    try{
+        $result = $conn->execute_query($sql, [$orderID]);
+        CloseConn($conn);
+
+        if (mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+    }
+    catch (mysqli_sql_exception) {
+        createLog($conn->error);
+        die("Error: cannot get the order!");
+    }
     return null;
 }

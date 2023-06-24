@@ -40,7 +40,7 @@ body{
 
 /* Booking Status */
 .completed {
-    color: #008000; /* Green */
+    color: #00c400; /* Green */
     font-weight: bold;
     text-decoration: none;
 }
@@ -51,20 +51,11 @@ body{
     text-decoration: none;
 }
 
-.refunded {
+.cancelled {
     color: #FF0000; /* Red */
     font-weight: bold;
-    text-decoration: line-through;
 }
 
-.rejected {
-    color: #800080; /* Purple */
-    font-weight: bold;
-    text-decoration: none;
-    background-color: #F5F5F5;
-    padding: 5px;
-    border-radius: 3px;
-}
 
 .bg-yellow-dark {
     background-color: #c48e12 !important;

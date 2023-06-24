@@ -11,14 +11,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try{
         if(!empty($postedToken)){
             if(isTokenValid($postedToken)){
-                //delete user todo
+                //delete product todo
                 if (isset($_POST["delete"])) {
                     $productID = htmlspecialchars($_POST["product_id"]);
 
                     deleteProduct($productID) or throw new Exception("Couldn't delete product");
                     makeToast("success", "Product successfully deleted!", "Success");
                 }
-                //create admin todo
+                //create product todo
                 else if (isset($_POST["product"])) {
                     $productName = htmlspecialchars($_POST["product_name"]);
                     $productCode = htmlspecialchars($_POST["product_code"]);
@@ -40,9 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         throw new Exception($file["error"]);
                     }
 
-                    $fileNameTrue = str_replace("-", " ", reset($fileArr));
+                    $fileNameTrue = str_replace(" ", "-", reset($fileArr));
                     $fileNameNew = $fileNameTrue . "." . $fileExt;
-                    $fileDestination = $_SERVER['DOCUMENT_ROOT'] . '/assets/images/' . $fileNameNew;
+                    $fileDestinationRelative = '/assets/images/' . $fileNameNew;
+                    $fileDestination = $_SERVER['DOCUMENT_ROOT'] . $fileDestinationRelative;
+
 
                     if (in_array($fileExt, $allowed)) {
                         if ($fileSize < 10485760) {
@@ -57,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
 
                     //create product
-                    createProduct($productName, $productCode, $fileDestination, $productPrice) or throw new Exception("Couldn't create product");
+                    createProduct($productName, $productCode, $fileDestinationRelative, $productPrice) or throw new Exception("Couldn't create product");
 
                     makeToast("success", "Product successfully created!", "Success");
                 }
@@ -74,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /admin/manage-product.php");
+    header("Location: /admin/manage-products.php");
     die();
 }
 
@@ -108,14 +110,16 @@ $token = getToken();
                         <div class="row">
                             <span class="h3"><?= $productCount ?> products found</span>
                         </div>
-                        <div class="col text-end">
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#productStatic">
-                                <span class="h5"><i class="bi bi-plus-circle"> </i>Add</span>
-                            </button>
-                        </div>
 
                         <div class="shadow p-3 mb-5 mt-3 bg-body rounded row gx-3 mx-1">
-                            <span class="fs-1">Products</span>
+                            <div class="col">
+                                <span class="fs-1 mb-3">Products</span>
+                            </div>
+                            <div class="col text-end">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#productStatic">
+                                    <span class="h5"><i class="bi bi-plus-circle"> </i>Add</span>
+                                </button>
+                            </div>
                             <table class="table table-responsive table-hover">
                                 <thead>
                                 <tr>
@@ -137,11 +141,11 @@ $token = getToken();
                                                 <td><img class='img-fluid w-100' src='{$product["product_image"]}' style='max-width: 200px;'></td>
                                                 <td>{$product["product_name"]}</td>
                                                 <td>RM{$price}</td>
-                                                <td>
-                                                     <form action='/admin/manage-orders.php' id='{$product["product_id"]}' method='post'>
-                                                        <input type='hidden' name='user_id' value='{$product["product_id"]}'>
-                                                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$product["product_id"]}}, \"modal-btn\");' class='h4'>
+                                                <td class='text-center'>
+                                                     <form action='/admin/manage-products.php' id='{$product["product_id"]}' method='post'>
+                                                        <input type='hidden' name='product_id' value='{$product["product_id"]}'>
                                                         <input type='hidden' name='token' value='{$_SESSION["token"]}'>
+                                                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$product["product_id"]}, \"modal-btn-delete\");' class='h4'> 
                                                         <i class='bi bi-trash'></i></a>
                                                     </form>   
                                                 </td>
@@ -211,7 +215,7 @@ $token = getToken();
                                 </div>
                                 <div class='modal-footer bg-light-subtle'>
                                     <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
-                                    <button type='submit' id="modal-btn" form="" name="delete" value="1" class='btn btn-danger'>I understand</button>
+                                    <button type='submit' id="modal-btn-delete" form="" name="delete" value="1" class='btn btn-danger'>I understand</button>
                                 </div>
                             </div>
                         </div>
