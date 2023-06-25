@@ -25,7 +25,7 @@ The Kerepek Funz Sales System offers the following features:
 ### Admin Side
 1. **Create New Product**: Admins can add new products to the system, including details such as name, description, price, and image.
 2. **Delete Existing Product**: Admins can remove products from the system.
-3. **Update Order Transaction Status**: Admins can update the status of customer orders, such as "Processing," "Shipped," or "Delivered."
+3. **Update Order Transaction Status**: Admins can update the status of customer orders, such as "Pending," "Completed", or "Cancelled"
 4. **Delete Users**: Admins have the ability to delete user accounts from the system.
 5. **Create Admin Accounts**: Admins can create new admin accounts to manage the system.
 
