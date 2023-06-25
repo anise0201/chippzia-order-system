@@ -10,8 +10,6 @@ Kerepek Funz Sales System is a web-based application developed using PHP, JavaSc
 - [Setup](#setup)
 - [Usage](#usage)
 - [Admin Account](#admin-account)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 The Kerepek Funz Sales System offers the following features:
