@@ -100,7 +100,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                             </tr>
 
                                             <tr class="details">
-                                                <td>Direct Bank Transfer</td>
+                                                <td>Debit/Credit Card</td>
                                                 <td></td>
                                             </tr>
 

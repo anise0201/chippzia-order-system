@@ -130,7 +130,7 @@ displayToast();
                         </a>
                       </li>
                       <li>
-                        <a href="/cart.php">
+                        <a href="order/cart.php">
                           <svg class="cart">
                             <use xlink:href="#cart"></use>
                           </svg>
@@ -278,8 +278,7 @@ displayToast();
                                     <h3 class="card-title text-uppercase">
                                         <a href="#">Jejari Ubi</a>
                                     </h3>
-                                    <span class="item-price text-primary">RM10</span>
-                                </div>
+                                    <span class="item-price text-primary">RM5.99</span></div>
                             </div>
                         </div>
                         <div class="swiper-slide">
@@ -296,7 +295,7 @@ displayToast();
                                     <h3 class="card-title text-uppercase">
                                         <a href="#">Kerepek Pedas</a>
                                     </h3>
-                                    <span class="item-price text-primary">RM10</span>
+                                    <span class="item-price text-primary">RM6.99</span>
                                 </div>
                             </div>
                         </div>
@@ -314,7 +313,7 @@ displayToast();
                                     <h3 class="card-title text-uppercase">
                                         <a href="#">Kerepek Pisang </a>
                                     </h3>
-                                    <span class="item-price text-primary">RM10</span>
+                                    <span class="item-price text-primary">RM6.99</span>
                                 </div>
                             </div>
                         </div>
@@ -332,7 +331,7 @@ displayToast();
                                     <h3 class="card-title text-uppercase">
                                         <a href="#">Kerepek Ubi Original</a>
                                     </h3>
-                                    <span class="item-price text-primary">RM10</span>
+                                    <span class="item-price text-primary">RM5.99</span>
                                 </div>
                             </div>
                         </div>
@@ -350,7 +349,7 @@ displayToast();
                                     <h3 class="card-title text-uppercase">
                                         <a href="#">Kerepek Ubi Pedas</a>
                                     </h3>
-                                    <span class="item-price text-primary">RM10</span>
+                                    <span class="item-price text-primary">RM6.99</span>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,6 @@
 <?php
 require('connection.inc.php');
 require('boilerplate.inc.php');
-
 require('users.inc.php');
 require('orders.inc.php');
 require('product.inc.php');
@@ -79,7 +78,7 @@ function admin_login_required() {
     }
 }
 
-//special function to prevent admin from bookings flights & customer from creating flights
+//special function to prevent admin from purchase products & customer from adding producst
 function admin_forbidden(): void
 {
     if (isset($_SESSION["user_data"])){
@@ -98,9 +97,6 @@ function customer_forbidden(): void
         }
     }
 }
-
-
-
 
 function getToken(){
     $token = sha1(mt_rand());

@@ -73,6 +73,13 @@ $token = getToken();
     <link rel="stylesheet" href="/assets/css/progress.css">
     <title>Kerepek Funz | Shopping Cart</title>
 </head>
+<style>
+	.icon-container {
+		margin-bottom: 20px;
+		padding: 7px 0;
+		font-size: 24px;
+	}
+</style>
 <body>
 <div class="container-fluid">
     <div class="row flex-nowrap">
@@ -98,10 +105,46 @@ $token = getToken();
                                         <li><strong>Finish</strong></li>
                                     </ul>
                                     <fieldset>
-                                        <div class="form-card">
-                                            <h2 class="fs-title">Payment Information</h2>
-                                            PLACEHOLDER
-                                        </div>
+<div class="row">
+  <div class="col-75">
+    <div class="container">
+      <form action="/action_page.php">
+
+        <div class="row">
+          <div class="col-50">
+            <h3>Payment Information</h3>
+            <label for="fname">Accepted Cards Only!</label>
+			  <label for="fname">Debit/Credit card required</label>
+			  .
+              <div class="icon-container">
+              <i class="fa fa-cc-visa" style="color:navy;"></i>
+              <i class="fa fa-cc-amex" style="color:blue;"></i>
+              <i class="fa fa-cc-mastercard" style="color:red;"></i>
+              <i class="fa fa-cc-discover" style="color:orange;"></i>
+            </div>
+            <label for="cname">Name on Card</label>
+            <input type="text" id="cname" name="cardname" placeholder="John More Doe" required>
+            <label for="ccnum">Credit card number</label>
+            <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444" required>
+            <label for="expmonth">Exp Month</label>
+            <input type="text" id="expmonth" name="expmonth" placeholder="September" required>
+
+            <div class="row">
+              <div class="col-50">
+                <label for="expyear">Exp Year</label>
+                <input type="text" id="expyear" name="expyear" placeholder="2018" required>
+              </div>
+              <div class="col-50">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="352" required>
+              </div>
+            </div>
+			</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
                                         <input type="hidden" name="token" value="<?= $token ?>">
                                         <input type="submit" class="action-button float-end" value="Proceed"/>
                                     </fieldset>
