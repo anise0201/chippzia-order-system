@@ -91,7 +91,7 @@ $token = getToken();
                                     </button>
                                 </div>
                             </div>
-                            <div class="row mt-3 table-responsive">
+                            <div class="row mt-3 px-3 table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -116,7 +116,7 @@ $token = getToken();
                             <div class="row">
                                 <span class="h3"><?= $customersCount ?> customers found</span>
                             </div>
-                            <div class="row mt-3 table-responsive">
+                            <div class="row mt-3 px-3 table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>

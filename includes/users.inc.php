@@ -94,7 +94,7 @@ function retrieveStates() {
 
 function retrieveUser($userID) {
     $sql = "SELECT us.*, s.* FROM users us 
-            INNER JOIN states s on us.state_code = s.state_code
+            LEFT OUTER JOIN states s on us.state_code = s.state_code
             WHERE us.user_id = ?";
 
     $conn = OpenConn();
@@ -243,7 +243,7 @@ function retrieveAllAdminUsers() {
 
 function retrieveAllCustomerUsers() {
     $sql = "SELECT u.*, s.state_name FROM users u 
-         INNER JOIN states s on u.state_code = s.state_code
+         LEFT OUTER JOIN states s on u.state_code = s.state_code
          WHERE user_type = 'customer'";
 
     $conn = OpenConn();

@@ -57,7 +57,7 @@ function customer_login_required(): void
         header("Location: /login.php");
         die();
     }
-    $_SESSION["user_data"] = retrieveUserSimple($_SESSION["user_data"]["user_id"]);
+    $_SESSION["user_data"] = retrieveUser($_SESSION["user_data"]["user_id"]);
     if (returnUserType($_SESSION["user_data"]["user_id"]) != "customer"){
         header("Location: /index.php");
         die();
@@ -92,6 +92,7 @@ function customer_forbidden(): void
 {
     if (isset($_SESSION["user_data"])){
         if (returnUserType($_SESSION["user_data"]["user_id"]) === "customer"){
+            makeToast("warning", "You are forbidden from going to that page", "Warning");
             header("Location: /account/dashboard.php");
             die();
         }
@@ -120,12 +121,24 @@ function isTokenValid($token){
 function array_keys_isset_or_not($keys, $array): bool
 {
     foreach ($keys as $key) {
+        if (!isset($array[$key])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+//check array keys is set
+function array_keys_isempty_or_not($keys, $array): bool
+{
+    foreach ($keys as $key) {
         if (empty($array[$key])) {
             return false;
         }
     }
     return true;
 }
+
 
 
 function createLog($data): void

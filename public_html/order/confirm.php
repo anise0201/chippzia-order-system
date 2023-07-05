@@ -9,12 +9,16 @@ displayToast();
 //cart no longer need
 unset($_SESSION["cart"]);
 
+
 $user = $_SESSION["user_data"];
-$totalCost = $_SESSION["totalCost"];
 $orderID = $_SESSION["orderID"];
 
+$order = retrieveOrderSpecific($orderID);
+$totalCost = $order["order_price"];
+
 $orderCode = sprintf('%08d', $orderID);
-$date = date("d M Y");
+$date = date_create($order["date_created"]);
+$date = date_format($date, "d M Y");
 
 $subTotal = number_format(($totalCost - 5), 2, ".", ",");
 $total = number_format(($totalCost), 2, ".", ",");
@@ -41,8 +45,11 @@ $total = number_format(($totalCost), 2, ".", ",");
             <div class="container mt-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-12 me-3 mt-3 mb-5">
-                        <h2><strong>Thanks for shopping with Kerepek Funz</strong></h2>
-                        <p>We hope you'll order again from us!</p>
+                        <div class="row ms-4">
+                            <h2><strong>Thanks for shopping with Kerepek Funz</strong></h2>
+                            <p>We hope you'll order again from us!</p>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-12 mx-0">
                                 <div id="msform">
@@ -53,7 +60,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                         <li class="active"><strong>Finish</strong></li>
                                     </ul>
                                     <!--  invoice-->
-                                    <div class="invoice-box bg-white">
+                                    <div class="invoice-box bg-white" id="invoice">
                                         <table>
                                             <tr class="top">
                                                 <td colspan="2">
@@ -64,7 +71,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                             </td>
 
                                                             <td>
-                                                                Invoice: #<?= $orderCode; ?><br />
+                                                                Invoice: <span class="fw-bold">#<?= $orderCode; ?></span><br />
                                                                 Created: <?= $date; ?><br />
                                                             </td>
                                                         </tr>
@@ -77,11 +84,10 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                     <table>
                                                         <tr>
                                                             <td>
-                                                                AIRASIA BERHAD<br />
-                                                                RedQ Jalan Pekeliling 5<br />
-                                                                Lapangan Terbang Antarabangsa Kuala Lumpur<br/>
-                                                                Selangor, 64000 Malaysia<br />
-                                                                +60-3-86604333
+                                                                Ground Floor, No: 14, Jalan Wallagonia 1 <br/>
+                                                                Taman Universiti Wallagonia,<br/>
+                                                                35400 Tapah, Perak <br/>
+                                                                +6011-115 62807 <br/>
                                                             </td>
 
                                                             <td>
@@ -110,6 +116,19 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                 <td>Price</td>
                                             </tr>
 
+                                            <?php
+                                            $orderLines = retrieveAllOrderLines($orderID);
+                                            foreach ($orderLines as $item) {
+                                                $cost = $item["product_price"] * $item["quantity"];
+                                                $cost = number_format($cost, 2);
+                                                echo "<tr class='item'>
+                                                    <td>{$item["product_name"]} ({$item["product_price"]}) x{$item["quantity"]}</td>
+                                                    <td>RM{$cost}</td>
+                                                </tr>";
+                                            }
+
+                                            ?>
+
                                             <tr class="item">
                                                 <td>Subtotal</td>
 
@@ -132,6 +151,13 @@ $total = number_format(($totalCost), 2, ".", ",");
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="text-center mt-5">
+                                <a href="/" class="btn btn-link d-print-none me-1">Back to Home</a>
+                                <button class="btn btn-warning text-white d-print-none" style="width: 10%;" onclick="window.print()">Print</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

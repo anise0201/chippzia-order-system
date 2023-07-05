@@ -54,6 +54,7 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
+    <link rel="stylesheet" href="/assets/css/progress.css">
     <title>Kerepek Funz | Shopping Cart</title>
 </head>
 <body>
@@ -67,6 +68,14 @@ $token = getToken();
 
             <!-- todo DASHBOARD here  -->
             <div class="container">
+                <div id="msform">
+                    <!-- progressbar -->
+                    <ul id="progressbar">
+                        <li class="active"><strong>Cart</strong></li>
+                        <li><strong>Checkout</strong></li>
+                        <li><strong>Finish</strong></li>
+                    </ul>
+                </div>
                 <div class="row mt-4 gx-4 ms-3">
                     <div class="shadow p-3 mb-3 bg-body rounded col-lg-8  me-3">
                         <div class="ro mb-2">
@@ -126,14 +135,12 @@ $token = getToken();
                                 ?>
                             </div>
                         </div>
-
-
                     </div>
-                    <div class="shadow p-4 mb-3 bg-body rounded col h-25">
+                    <div class="shadow p-4 mb-3 bg-body rounded col h-25 ">
                         <div class="row">
                             <span class="h4">Total Price Details:</span>
                         </div>
-                        <div class="row my-2">
+                        <div class="row my-2 px-4">
                             <?php
                             $subTotal = number_format((float)$cost, 2, ".", ",");
                             $delivery = $subTotal > 0 ? 5 : 0;
@@ -170,7 +177,7 @@ $token = getToken();
                             </div>
                         </div>
 
-                        <div class="row mt-2">
+                        <div class="row mt-4 px-4">
                             <a type="button" class="btn btn-outline-primary" href="/order/checkout.php">Check-out</a>
                         </div>
                     </div>

@@ -12,14 +12,6 @@ displayToast();
   <head>
     <title>Kerepek Funz</title>
     <?php head_tag_content(); ?>
-    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- script
-    ================================================== -->
-    <script src="/assets/js/modernizr.js"></script>
   </head>
   <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0" bgcolor=#FF682D>
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -92,59 +84,8 @@ displayToast();
       </symbol>
     </svg>
 
-    <header id="header" class="site-header header-scrolled position-fixed text-black bg-light">
-      <nav id="header-nav" class="navbar navbar-expand-lg px-3 mb-3">
-        <div class="container-fluid">
-<button class="navbar-toggler d-flex d-lg-none order-3 p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <svg class="navbar-icon">
-              <use xlink:href="#navbar-icon"></use>
-            </svg>
-          </button>
-          <div class="offcanvas offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="bdNavbarOffcanvasLabel">
-            <div class="offcanvas-header px-4 pb-0">
-              <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdNavbar"></button>
-            </div>
-            <div class="offcanvas-body align-item-center">
-				<img src="/assets/images/icon2.jpg" width="50" height="50" >
-              <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
-                <li class="nav-item">
-                  <a class="nav-link me-4 active" href="#billboard">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-4" href="#company-services">Services</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-4" href="#mobile-products">Products</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-4" href="#yearly-sale">Sale</a>
-                </li>
-                <li class="nav-item">
-                  <div class="user-items ps-5">
-                    <ul class="d-flex justify-content-end list-unstyled">
-                      <li class="pe-3">
-                        <a href="/login.php">
-                          <svg class="user">
-                            <use xlink:href="#user"></use>
-                          </svg>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="order/cart.php">
-                          <svg class="cart">
-                            <use xlink:href="#cart"></use>
-                          </svg>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+    <?php nav_menu() ?>
+
     <section id="billboard" class="position-relative overflow-hidden bg-body">
       <div class="swiper main-swiper">
         <div class="swiper-wrapper">
@@ -158,9 +99,9 @@ displayToast();
                   </div>
                 </div>
                 <div class="col-md-5">
-                  <div class="image-holder">
+                  <a class="image-holder" href="/">
                     <img src="/assets/images/banner-image.png" alt="banner" width="600" height="600">
-                  </div>
+                  </a>
                 </div>
               </div>
             </div>

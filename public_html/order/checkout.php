@@ -7,7 +7,7 @@ customer_login_required();
 
 //check if all info are okay
 $user = $_SESSION["user_data"];
-if (!array_keys_isset_or_not(["user_address", "user_postcode", "user_city",
+if (!array_keys_isempty_or_not(["user_address", "user_postcode", "user_city",
     "user_phone", "state_code"], $user)){
     makeToast("info", "You must fill in all the contact details before you are allowed to order!", "Info");
     header("Location: /account/profile.php");
@@ -33,7 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $order = createOrder($totalCost, $userID, $cart) or throw new Exception("Something went terribly 
                 wrong during the ordering process!<br>Please contact the administrator!");
                 $_SESSION["orderID"] = $order["order_id"];
-                $_SESSION["totalCost"] = $totalCost;
             }
             else{
                 makeToast("warning", "Please refrain from attempting to resubmit previous form", "Warning");
@@ -105,46 +104,46 @@ $token = getToken();
                                         <li><strong>Finish</strong></li>
                                     </ul>
                                     <fieldset>
-<div class="row">
-  <div class="col-75">
-    <div class="container">
-      <form action="/action_page.php">
+                                        <div class="row">
+                                          <div class="col-75">
+                                            <div class="container">
+                                              <form action="/action_page.php">
 
-        <div class="row">
-          <div class="col-50">
-            <h3>Payment Information</h3>
-            <label for="fname">Accepted Cards Only!</label>
-			  <label for="fname">Debit/Credit card required</label>
-			  .
-              <div class="icon-container">
-              <i class="fa fa-cc-visa" style="color:navy;"></i>
-              <i class="fa fa-cc-amex" style="color:blue;"></i>
-              <i class="fa fa-cc-mastercard" style="color:red;"></i>
-              <i class="fa fa-cc-discover" style="color:orange;"></i>
-            </div>
-            <label for="cname">Name on Card</label>
-            <input type="text" id="cname" name="cardname" placeholder="John More Doe" required>
-            <label for="ccnum">Credit card number</label>
-            <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444" required>
-            <label for="expmonth">Exp Month</label>
-            <input type="text" id="expmonth" name="expmonth" placeholder="September" required>
+                                                <div class="row">
+                                                  <div class="col-50">
+                                                    <h3>Payment Information</h3>
+                                                    <label for="fname">Accepted Cards Only!</label>
+                                                      <label for="fname">Debit/Credit card required</label>
+                                                      .
+                                                      <div class="icon-container">
+                                                      <i class="fa fa-cc-visa" style="color:navy;"></i>
+                                                      <i class="fa fa-cc-amex" style="color:blue;"></i>
+                                                      <i class="fa fa-cc-mastercard" style="color:red;"></i>
+                                                      <i class="fa fa-cc-discover" style="color:orange;"></i>
+                                                    </div>
+                                                    <label for="cname">Name on Card</label>
+                                                    <input type="text" id="cname" name="cardname" placeholder="John More Doe" required>
+                                                    <label for="ccnum">Credit card number</label>
+                                                    <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444" required>
+                                                    <label for="expmonth">Exp Month</label>
+                                                    <input type="text" id="expmonth" name="expmonth" placeholder="September" required>
 
-            <div class="row">
-              <div class="col-50">
-                <label for="expyear">Exp Year</label>
-                <input type="text" id="expyear" name="expyear" placeholder="2018" required>
-              </div>
-              <div class="col-50">
-                <label for="cvv">CVV</label>
-                <input type="text" id="cvv" name="cvv" placeholder="352" required>
-              </div>
-            </div>
-			</div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+                                                    <div class="row">
+                                                      <div class="col-50">
+                                                        <label for="expyear">Exp Year</label>
+                                                        <input type="text" id="expyear" name="expyear" placeholder="2018" required>
+                                                      </div>
+                                                      <div class="col-50">
+                                                        <label for="cvv">CVV</label>
+                                                        <input type="text" id="cvv" name="cvv" placeholder="352" required>
+                                                      </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        </div>
                                         <input type="hidden" name="token" value="<?= $token ?>">
                                         <input type="submit" class="action-button float-end" value="Proceed"/>
                                     </fieldset>

@@ -18,13 +18,13 @@ function sendMail($recipientEmail, $subject, $body)
     $mail->isSMTP();                            // Set mailer to use SMTP
     $mail->Host = 'smtp.gmail.com';           // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                     // Enable SMTP authentication
-    $mail->Username = 'kerepekfunz5@gmail.com';       // SMTP username
-    $mail->Password = 'jlmcoseoyexindtz';         // SMTP password
+    $mail->Username = 'kerepekfunzz@gmail.com';//'kerepekfunz5@gmail.com';       // SMTP username
+    $mail->Password = 'zxipkvsxhyblbbpe';//'jlmcoseoyexindtz';         // SMTP password
     $mail->SMTPSecure = 'ssl';                  // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                          // TCP port to connect to
 
 // Sender info
-    $mail->setFrom('info@gmail.com', 'Kerepek Funz Information System');
+    $mail->setFrom('kerepekfunzz@gmail.com', 'Kerepek Funz Information System');
 
 // Add a recipient
     $mail->addAddress($recipientEmail);

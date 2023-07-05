@@ -6,7 +6,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     font-size: 16px;
     line-height: 24px;
-    font-family: 'Helvetica Neue', 'Poppins', 'Helvetica', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica', Helvetica, Arial, sans-serif;
     color: #555;
 }
 
@@ -88,4 +88,17 @@
 
 .invoice-box.rtl table tr td:nth-child(2) {
     text-align: left;
+}
+
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #invoice * {
+        visibility: visible;
+    }
+    #sidebar, .navbar, footer * {
+        display: none;
+    }
 }
