@@ -58,21 +58,17 @@ $token = getToken();
 <head>
     <?php head_tag_content(); ?>
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+
     </style>
     <title>Login</title>
 </head>
 <body>
-<?php ?>
-<div class="container-fluid">
-    <div style="width: 100%; height: 500px;"></div>
+<?php nav_menu(); ?>
+<section id="billboard" class="position-relative overflow-hidden bg-body">
+</section>
+<div class="container-fluid my-5">
     <div class="row overflow-x-auto">
-        <div class="container my-4">
+        <div class="container my-5">
             <div class="row mt-5">
                 <div class="col-md-6 offset-md-3">
                     <h2 class="text-center mb-4">Registration</h2>

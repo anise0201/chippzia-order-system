@@ -31,19 +31,15 @@ displayToast();
 <head>
     <?php head_tag_content(); ?>
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+
     </style>
     <title>Login</title>
 </head>
 <body>
-    <?php ?>
+<?php nav_menu(); ?>
+    <section id="billboard" class="position-relative overflow-hidden bg-body">
+    </section>
     <div class="container-fluid">
-        <div style="height: 250px;"></div>
         <div class="container my-5 py-5">
             <form action="<?php current_page(); ?>" method="post">
                 <div class="row pt-5">
