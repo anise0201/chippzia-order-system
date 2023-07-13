@@ -20,8 +20,8 @@ function sendMail($recipientEmail, $subject, $body)
     $mail->SMTPAuth = true;                     // Enable SMTP authentication
     $mail->Username = 'kerepekfunz5@gmail.com';       // SMTP username
     $mail->Password = 'ymxfrbraxxakwrkl';          // SMTP password
-    $mail->SMTPSecure = 'ssl';                  // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 465;                          // TCP port to connect to
+    $mail->Port = 587;
+    $mail->SMTPSecure = 'tls';
 
 // Sender info
     $mail->setFrom('info@gmail.com', 'Kerepek Funz Information System');
