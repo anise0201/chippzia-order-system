@@ -1,9 +1,9 @@
-# Kerepek Funz Sales System
+# Chipzzia Sales System
 
 ![Kerepek Funz Sales System Logo](/public_html/assets/images/icon2.jpg)
 
-Kerepek Funz Sales System is a web-based application developed using PHP, JavaScript, CSS, and HTML. It provides a convenient and efficient sales management system with separate functionalities for both customers and administrators. This readme file will guide you through the installation and usage of the system.
-- [This project is made using of air-asia-booking-system]
+Chipzzia Sales System is a web-based application developed using PHP, JavaScript, CSS, and HTML. It provides a convenient and efficient sales management system with separate functionalities for both customers and administrators. This readme file will guide you through the installation and usage of the system.
+- [This project is made using of kerepek-funz-sales-system, which is made using air-asia-booking-system]
 
 ## Table of Contents
 - [Features](#features)
@@ -13,7 +13,7 @@ Kerepek Funz Sales System is a web-based application developed using PHP, JavaSc
 - [Admin Account](#admin-account)
 
 ## Features
-The Kerepek Funz Sales System offers the following features:
+The Chipzzia Sales System offers the following features:
 
 ### Customer Side
 1. **Add to Cart**: Customers can add products to their cart for purchase.
@@ -29,17 +29,18 @@ The Kerepek Funz Sales System offers the following features:
 5. **Create Admin Accounts**: Admins can create new admin accounts to manage the system.
 
 ## Requirements
-To run the Kerepek Funz Sales System, you need to have the following software installed:
+To run the Chipzzia Sales System, you need to have the following software installed:
 
-1. [XAMPP](https://www.apachefriends.org/index.html): A web server solution that includes Apache, MySQL, and PHP.
+1. [XAMPP](https://www.apachefriends.org/index.html): A web server solution that includes Apache, and PHP. Must be PHP 8.1 or below though, if you wish to use Oracle 11g
+2. Oracle 11g
 
 ## Setup
 1. Open up the XAMPP Control Panel
 2. Go to XAMPP Apache "httpd.conf" file
-3. Open it, and change DocumentRoot to the location of the air-asia-booking-system "public_html"
+3. Open it, and change DocumentRoot to the location of the chippzia-sales-system "public_html" (?)
 
 ## Usage
-Once the Kerepek Funz Sales System is set up, you can use the following instructions to utilize its functionalities:
+Once the Chipzzia Sales System is set up, you can use the following instructions to utilize its functionalities:
 
 1. **Customer Side**: Register a customer account or use an existing one to log in. Browse the available products, add them to the cart, and proceed to checkout to complete the purchase. You can also view your order history and update your profile information.
 
