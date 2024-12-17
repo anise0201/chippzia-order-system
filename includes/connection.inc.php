@@ -1,18 +1,21 @@
 <?php
 function OpenConn() 
 {
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $db = "kerepek-funz-sales-system";
-	
-	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $username = "chipzzia";                   // Your Oracle username
+    $password = "chipzzia";                   // Your Oracle password
+    $database = "localhost:1521/xe";    // Oracle connection string: host:port/service_name
+
+    // Turn on error reporting
+    error_reporting(E_ALL);
+    ini_set('display_errors', 'On');
+
     // Create connection
-    try {
-    	$conn = mysqli_connect($host, $username, $password, $db);
-    }
-    catch(mysqli_sql_exception){
-        die("Connection failed: " . mysqli_connect_error());
+
+    // Connect to Oracle Database
+    $conn = oci_connect($username, $password, $database);
+    if (!$conn) {
+        $m = oci_error();
+        die("Oracle Connection failed: " . $m['message']);
     }
 
     return $conn;
@@ -20,5 +23,5 @@ function OpenConn()
 
 function CloseConn($conn): void
 {
-    $conn -> close();
+    oci_close($conn);
 }
