@@ -17,7 +17,7 @@ $ordersCount = retrieveOrderCountUser($user["user_id"])["count"];
 $totalSpend = retrieveUserTotalSpend($user["user_id"])["sum"];
 $ordersLineSum = retrieveOrderLineSumQuantityUser($user["user_id"])["sum"] ?? 0;
 
-$orders = retrieveAllUserOrders5LIMIT($user["user_id"]);
+$orders = retrieveAllCustomerOrders($user["user_id"], 5);
 $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
 ?>
 <!DOCTYPE html>

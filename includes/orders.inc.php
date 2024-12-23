@@ -6,44 +6,41 @@ require_once("functions.inc.php");
 
 //todo create, delete select orders
 
-//orders (user)
-function retrieveAllUserOrders($userID) {
-    $sql = "SELECT * FROM orders WHERE user_id = ?";
+//orders (customer**)
+// Changed the code to fit better with the new database
+function retrieveAllCustomerOrders($customerID, $limit=null) {
+    $sql = "SELECT * FROM orders WHERE customer_id = :customer_id";
+
+    if ($limit) {
+        $sql .= "  WHERE rownum <= " . $limit;
+    }
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$userID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customer_id', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $orders = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $orders[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if ($orders) {
+            return $orders;
         }
-    }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve orders!");
-    }
 
-    return null;
-}
-
-function retrieveAllUserOrders5LIMIT($userID) {
-    $sql = "SELECT * FROM orders WHERE user_id = ? LIMIT 5";
-
-    $conn = OpenConn();
-
-    try {
-        $result = $conn->execute_query($sql, [$userID]);
+    } catch (Exception $e) {
+        createLog($e->getMessage());
         CloseConn($conn);
-
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
-        }
-    }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve orders!");
+        die("Error: Unable to retrieve orders!");
     }
 
     return null;

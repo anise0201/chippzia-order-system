@@ -1,18 +1,16 @@
 <?php
 function OpenConn() 
 {
-    $username = "chipzzia";                   // Your Oracle username
-    $password = "chipzzia";                   // Your Oracle password
-    $database = "localhost:1521/xe";    // Oracle connection string: host:port/service_name
+    $username = "chipzzia";
+    $password = "chipzzia";
+    $connection_string = "localhost:1521/xe";
 
     // Turn on error reporting
     error_reporting(E_ALL);
     ini_set('display_errors', 'On');
 
-    // Create connection
-
     // Connect to Oracle Database
-    $conn = oci_connect($username, $password, $database);
+    $conn = oci_connect($username, $password, $connection_string);
     if (!$conn) {
         $m = oci_error();
         die("Oracle Connection failed: " . $m['message']);
