@@ -9,19 +9,33 @@ require_once("functions.inc.php");
 
 function retrieveAllProduct() {
     $sql = "SELECT * FROM products p";
-
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve products!");
     }
 
@@ -29,20 +43,31 @@ function retrieveAllProduct() {
 }
 
 function retrieveProductCount() {
-    $sql = "SELECT COUNT(p.product_id) as 'count' FROM products p";
-
+    $sql = "SELECT COUNT(p.product_id) as \"count\" FROM products p";
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve product count!");
     }
 
@@ -50,86 +75,135 @@ function retrieveProductCount() {
 }
 
 function retrieveProduct($productID) {
-    $sql = "SELECT p.* FROM products p WHERE p.product_id = ?";
-
+    $sql = "SELECT p.* FROM products p WHERE p.product_id = :product_id";
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$productID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':product_id', $productID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve product!");
     }
 
     return null;
 }
 
-function deleteProduct($productID){
-    $sql = "DELETE FROM products WHERE product_id = ?";
-
+function deleteProduct($productID) {
+    $sql = "DELETE FROM products WHERE product_id = :product_id";
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$productID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':product_id', $productID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if ($result) {
-            return true;
-        }
+        return true;
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to delete product!");
     }
 
     return false;
 }
 
+
+//TODO: New schema, this code is no longer applicable. Will need changing soon! Product code does not exist
+// Inventory Quantity needed too
 function createProduct($productName, $productCode, $productImage, $productPrice) {
     $sql = "INSERT INTO products(product_name, product_code, product_image, product_price) 
-            VALUES (?, ?, ?, ?)";
-
+            VALUES (:product_name, :product_code, :product_image, :product_price)";
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$productName, $productCode, $productImage, $productPrice]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':product_name', $productName);
+        oci_bind_by_name($stmt, ':product_code', $productCode);
+        oci_bind_by_name($stmt, ':product_image', $productImage);
+        oci_bind_by_name($stmt, ':product_price', $productPrice);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to create product!");
+    }
+}
+
+// TODO: This code is also no longer applicable, since product code is taken out. Use Product Name next time
+// NVM I just did a quick change lmao
+function retrieveAllProductLike($query) {
+    $sql = "SELECT * FROM products p WHERE p.product_name LIKE :query";
+    $query = "%{$query}%";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':query', $query);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
         if ($result) {
-            return true;
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to create product!");
-    }
-
-    return false;
-}
-
-function retrieveAllProductLike($query) {
-    $sql = "SELECT * FROM products p WHERE p.product_code LIKE ? or p.product_name LIKE ?";
-    $query = "%{$query}%";
-
-    $conn = OpenConn();
-
-    try {
-        $result = $conn->execute_query($sql, [$query, $query]);
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
         CloseConn($conn);
-
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
-        }
-    }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve products like!");
+        die("Error: unable to retrieve products like".$query);
     }
 
     return null;
