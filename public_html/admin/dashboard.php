@@ -9,7 +9,7 @@ admin_login_required();
 $userCount = retrieveCountUsers()["count"] ?? 0;
 $productCount = retrieveProductCount()["count"] ?? 0;
 $ordersCount = retrieveOrderCount()["count"] ?? 0;
-$income = retrieveIncome()["sum"] ?? 0;
+$income = retrieveTotalIncome()["sum"] ?? 0;
 
 $incomeDecimal =  number_format((float)$income, 2, '.', '');
 

@@ -9,10 +9,10 @@ require_once("functions.inc.php");
 //orders (customer**)
 // Changed the code to fit better with the new database
 function retrieveAllCustomerOrders($customerID, $limit=null) {
-    $sql = "SELECT * FROM orders WHERE customer_id = :customer_id";
+    $sql = "SELECT * FROM result WHERE customer_id = :customer_id";
 
-    if ($limit) {
-        $sql .= "  WHERE rownum <= " . $limit;
+    if (isset($limit)) {
+        $sql .= "  AND rownum <= " . $limit;
     }
 
     $conn = OpenConn();
@@ -25,20 +25,23 @@ function retrieveAllCustomerOrders($customerID, $limit=null) {
             throw new Exception(oci_error($conn)['message']);
         }
 
-        $orders = [];
+        $result = [];
         while ($row = oci_fetch_assoc($stmt)) {
-            $orders[] = $row;
+            $result[] = $row;
         }
 
         oci_free_statement($stmt);
         CloseConn($conn);
 
-        if ($orders) {
-            return $orders;
+        if ($result) {
+            return $result;
         }
 
     } catch (Exception $e) {
         createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
         CloseConn($conn);
         die("Error: Unable to retrieve orders!");
     }
@@ -48,21 +51,36 @@ function retrieveAllCustomerOrders($customerID, $limit=null) {
 
 //orders (admin)
 function retrieveAllOrders() {
-    $sql = "SELECT o.*, u.* FROM orders o
-            INNER JOIN users u on o.user_id = u.user_id";
+    $sql = "SELECT o.*, c.* FROM result o
+            INNER JOIN customers c on c.customer_id = u.customer_id";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve orders!");
     }
 
@@ -70,23 +88,38 @@ function retrieveAllOrders() {
 }
 
 function retrieveAllOrders5LIMIT() {
-    $sql = "SELECT o.*, u.* FROM orders o
-            INNER JOIN users u on o.user_id = u.user_id
-            ORDER BY date_created DESC
-            LIMIT 5";
+    $sql = "SELECT o.*, c.* FROM orders o
+            INNER JOIN customers c on c.customer_id = u.customer_id
+            WHERE rownum <= 5
+            ORDER BY created_at DESC";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve orders!");
     }
 
@@ -95,89 +128,141 @@ function retrieveAllOrders5LIMIT() {
 
 // order count (admin)
 function retrieveOrderCount() {
-    $sql = "SELECT COUNT(o.order_id) as 'count' FROM orders o";
+    $sql = "SELECT COUNT(o.order_id) AS \"count\" FROM orders o";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve orders count!");
     }
 
     return null;
 }
 
-//order count (user)
-function retrieveOrderCountUser($userID) {
-    $sql = "SELECT COUNT(o.order_id) as 'count' FROM orders o WHERE o.user_id = ?";
+//order count (customer)
+function retrieveCustomerOrderCount($customerID) {
+    $sql = "SELECT COUNT(o.order_id) AS \"count\" 
+            FROM orders o 
+            WHERE o.customer_id = :customer_id";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$userID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customer_id', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve orders count!");
     }
 
     return null;
 }
 
-function retrieveOrderLineSumQuantityUser($userID) {
-    $sql = "SELECT SUM(ol.quantity) as 'sum' 
+function retrieveCustomerOrderLineSumQuantity($customerID) {
+    $sql = "SELECT SUM(ol.quantity) as \"sum\" 
             FROM order_lines ol
-            INNER JOIN orders o on ol.order_id = o.order_id 
-                                       AND o.user_id = ?";
+            INNER JOIN orders o on ol.order_id = o.order_id AND o.customer_id = :customer_id";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$userID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customer_id', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve orders count!");
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve order lines count!");
     }
 
     return null;
 }
 
-function retrieveUserTotalSpend($userID) {
-    $sql = "SELECT sum(order_price) as 'sum' FROM orders
-            WHERE order_status = 'COMPLETED' and user_id = ?";
+function retrieveCustomerTotalSpend($customerID) {
+    $sql = "SELECT sum(order_price) as \"sum\" FROM orders
+            WHERE order_status = 'COMPLETED' and customer_id = :customer_id";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$userID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customer_id', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: unable to retrieve orders count!");
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve customer total spent!");
     }
 
     return null;
@@ -185,26 +270,43 @@ function retrieveUserTotalSpend($userID) {
 function retrieveAllOrderLines($orderID) {
     $sql = "SELECT o.*, p.* FROM order_lines o
          INNER JOIN products p on o.product_id = p.product_id
-         WHERE o.order_id = ?";
+         WHERE o.order_id = :order_id";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql, [$orderID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':order_id', $orderID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve order lines!");
     }
 
     return null;
 }
 
+//TODO : Create Order Function Oracle (this one is MariaDB/MySQL)
 function createOrder($order_price, $user_id, $cart){
     $sqlQueryFirst = "INSERT INTO orders(order_price, user_id) 
             VALUES (?, ?)";
@@ -248,63 +350,90 @@ function createOrder($order_price, $user_id, $cart){
 }
 
 function deleteOrder($orderID){
-    $sqlQueryFirst = "DELETE FROM orders WHERE order_id = ?";
+    $sql = "DELETE FROM orders WHERE order_id = :order_id";
     $conn = OpenConn();
 
     try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':order_id', $orderID);
 
-        $result = $conn->execute_query($sqlQueryFirst, [$orderID]);
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if ($result) {
-            return true;
-        }
+        return true;
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to delete order!");
     }
-
-    return false;
 }
 
+// TODO: this function has to be updated to include the employee who updated the order
+// In accordance with the new database and all that jazz :shrug:
 function updateOrder($orderID, $orderStatus){
-    $sql= "UPDATE orders SET order_status = ? 
-            WHERE order_id = ?";
+    $sql= "UPDATE orders SET order_status = :order_status 
+            WHERE order_id = :order_id";
     $conn = OpenConn();
 
     try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':order_id', $orderID);
+        oci_bind_by_name($stmt, ':order_status', $orderStatus);
 
-        $result = $conn->execute_query($sql, [$orderStatus, $orderID]);
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if ($result) {
-            return true;
-        }
+        return true;
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to update order!");
     }
-
-    return false;
 }
 
-function retrieveIncome() {
-    $sql = "SELECT SUM(order_price) as 'sum' FROM orders WHERE order_status = 'COMPLETED'";
+function retrieveTotalIncome() {
+    $sql = "SELECT SUM(order_price) as \"sum\" FROM orders WHERE order_status = 'COMPLETED'";
 
     $conn = OpenConn();
 
     try{
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result =  oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception) {
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: cannot get the income!");
     }
     return null;
@@ -312,44 +441,69 @@ function retrieveIncome() {
 
 //retrieve product bought total
 function retrieveAllProductBought() {
-    $sql = "SELECT SUM(ol.quantity) as 'sum' FROM order_lines ol
+    $sql = "SELECT SUM(ol.quantity) as \"sum\" FROM order_lines ol
             INNER JOIN orders o on ol.order_id = o.order_id AND o.order_status = 'COMPLETED'";
 
     $conn = OpenConn();
 
     try {
-        $result = $conn->execute_query($sql);
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception){
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
         die("Error: unable to retrieve product bought count!");
     }
 
     return null;
 }
 
+//will retrieve only one order so one is enough
 function retrieveOrderSpecific($orderID) {
-    $sql = "SELECT o.*, u.* FROM orders o
-            INNER JOIN users u on o.user_id = u.user_id
-            WHERE o.order_id = ?";
+    $sql = "SELECT o.*, c.* FROM orders o
+            INNER JOIN customers c on o.customer_id = c.customer_id
+            WHERE o.order_id = :order_id";
 
     $conn = OpenConn();
 
     try{
-        $result = $conn->execute_query($sql, [$orderID]);
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':order_id', $orderID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($conn)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
         CloseConn($conn);
 
-        if (mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+        if ($result) {
+            return $result;
         }
     }
-    catch (mysqli_sql_exception) {
-        createLog($conn->error);
+    catch (Exception $e){
+        createLog($e->getMessage());
+        if ($stmt) {
+            oci_free_statement($stmt);
+        }
         die("Error: cannot get the order!");
     }
     return null;

@@ -13,9 +13,9 @@ $name = $user["user_fname"] ?? "";
 $today = date_create("now");
 $date = date_format($today, "D, d M Y");
 
-$ordersCount = retrieveOrderCountUser($user["user_id"])["count"];
-$totalSpend = retrieveUserTotalSpend($user["user_id"])["sum"];
-$ordersLineSum = retrieveOrderLineSumQuantityUser($user["user_id"])["sum"] ?? 0;
+$ordersCount = retrieveCustomerOrderCount($user["user_id"])["count"];
+$totalSpend = retrieveCustomerTotalSpend($user["user_id"])["sum"];
+$ordersLineSum = retrieveCustomerOrderLineSumQuantity($user["user_id"])["sum"] ?? 0;
 
 $orders = retrieveAllCustomerOrders($user["user_id"], 5);
 $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
