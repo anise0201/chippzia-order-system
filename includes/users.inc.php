@@ -3,6 +3,649 @@
 require_once("functions.inc.php");
 /* USER RELATED */
 //create customer/admin
+
+// Technically not a user but :shrug:
+function createCustomer($fname, $lname, $phone, $address, $city, $state, $conn=null) {
+    //createCustomer can be called from createMember
+    $oci_mode = OCI_COMMIT_ON_SUCCESS;
+    if (!isset($conn)) {
+        $conn = OpenConn();
+    }
+    else {
+        //Do not commit if conn exists (which means its called from another function)
+        $oci_mode = OCI_NO_AUTO_COMMIT;
+    }
+    $sql = "INSERT INTO customers (CUSTOMER_ID, FIRST_NAME, LAST_NAME, PHONE, ADDRESS, CITY, STATE) 
+            VALUES (CUSTOMER_SEQ.NEXTVAL, :firstname, :lastname, :phone, :address, :city, :state)";
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':firstname', $fname);
+        oci_bind_by_name($stmt, ':lastname', $lname);
+        oci_bind_by_name($stmt, ':phone', $phone);
+        oci_bind_by_name($stmt, ':address', $address);
+        oci_bind_by_name($stmt, ':city', $city);
+        oci_bind_by_name($stmt, ':state', $state);
+
+        if (!oci_execute($stmt, $oci_mode)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        if ($oci_mode == OCI_COMMIT_ON_SUCCESS) {
+            oci_free_statement($stmt);
+            CloseConn($conn);
+        }
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to create customer!");
+    }
+}
+function createMember($fname, $lname, $email, $phone, $address, $city, $state, $username, $password) {
+    $conn = OpenConn();
+    $sql = "INSERT INTO MEMBERS(CUSTOMER_ID, EMAIL, USERNAME, PASSWORD_HASH)
+            VALUES (CUSTOMER_SEQ.CURRVAL, :email, :username,:passwordhash)";
+
+    try {
+        if (!createCustomer($fname, $lname, $phone, $address, $city, $state, $conn)) {
+            return false;
+        }
+        $stmt = oci_parse($conn, $sql);
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        oci_bind_by_name($stmt, ':username', $username);
+        oci_bind_by_name($stmt, ':email', $email);
+        oci_bind_by_name($stmt, ':passwordhash', $password_hash);
+
+        if (!oci_execute($stmt, OCI_NO_AUTO_COMMIT)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_commit($conn);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        oci_rollback($conn);
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to create member!");
+    }
+}
+function createEmployee($fname, $lname, $email, $phone, $username, $password, $managerID) {
+    $conn = OpenConn();
+    $sql = "INSERT INTO EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, USERNAME, PASSWORD_HASH, EMAIL, PHONE, MANAGER_ID)
+            VALUES (EMPLOYEE_SEQ.NEXTVAL, :firstname, :lastname, :username,:passwordhash, :email, :phone, :managerid)";
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        oci_bind_by_name($stmt, ':username', $username);
+        oci_bind_by_name($stmt, ':firstname', $fname);
+        oci_bind_by_name($stmt, ':lastname', $lname);
+        oci_bind_by_name($stmt, ':passwordhash', $password_hash);
+        oci_bind_by_name($stmt, ':email', $email);
+        oci_bind_by_name($stmt, ':phone', $phone);
+        oci_bind_by_name($stmt, ':managerid', $managerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to create employee!");
+    }
+}
+
+function checkMember($username, $email) {
+    $sql = "SELECT * FROM members WHERE USERNAME = :username AND EMAIL = :email";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':username', $username);
+        oci_bind_by_name($stmt, ':email', $email);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to check member!");
+    }
+
+    return false;
+}
+
+function returnUserType(){
+    $user = $_SESSION["user_data"];
+    return $user["user_type"];
+}
+
+function verifyMember($username_input, $password) {
+    //username input since it can either be email or username :)
+    $sql = "SELECT c.* FROM CUSTOMERS c
+            INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
+            AND (m.USERNAME = :usernameinput OR m.EMAIL = :usernameinput)";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':usernameinput', $username_input);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            if (password_verify($password, $result["password_hash"])){
+                return $result;
+            }
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to verify member!");
+    }
+
+    return null;
+}
+
+//Since employee and member has been separated, we will need to separate function to verify too
+function verifyEmployee($username_input, $password) {
+    $sql = "SELECT * FROM EMPLOYEES
+            WHERE (USERNAME = :usernameinput OR EMAIL = :usernameinput)";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':usernameinput', $username_input);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            if (password_verify($password, $result["password_hash"])){
+                return $result;
+            }
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to verify employee!");
+    }
+
+    return null;
+}
+
+//Retrieve states will be moved to functions.inc.php (it will refer to an API instead), since data
+// no longer exist in database
+
+function retrieveMember($customerID) {
+    $sql = "SELECT c.*, m.* FROM CUSTOMERS c
+            INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
+            WHERE c.CUSTOMER_ID = :customerID";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customerID', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+
+        die("Error: unable to retrieve member!");
+    }
+    makeToast("error", "Member doesn't exist or was removed!", "Error");
+    header("Location: /logout.php");
+    die();
+}
+function retrieveEmployee($employeeID) {
+    $sql = "SELECT * from EMPLOYEES
+            WHERE EMPLOYEE_ID = :employeeID";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':employeeID', $employeeID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+
+        die("Error: unable to retrieve employee!");
+    }
+    makeToast("error", "Employee doesn't exist or was removed!", "Error");
+    header("Location: /logout.php");
+    die();
+}
+
+function updateCustomerContact($customerID, $contact){
+    $sql = "UPDATE CUSTOMERS SET address = :address, CITY = :city, state = :state, PHONE = :phone
+            WHERE customer_id = ?";
+
+    $conn = OpenConn();
+    try{
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customerID', $customerID);
+        oci_bind_by_name($stmt, ':address', $contact["address"]);
+        oci_bind_by_name($stmt, ':city', $contact["city"]);
+        oci_bind_by_name($stmt, ':state', $contact["state"]);
+        oci_bind_by_name($stmt, ':phone', $contact["phone"]);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+
+        die("Error: unable to update customer contact details!");
+    }
+}
+
+//admin functions
+function retrieveCountCustomers() {
+    $sql = "SELECT COUNT(customer_id) as \"count\" FROM CUSTOMERS";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: cannot get the customers count!");
+    }
+    return null;
+}
+
+//Specifically count only members
+function retrieveCountMembers() {
+    $sql = "SELECT COUNT(customer_id) as \"count\" FROM MEMBERS";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: cannot get the members count!");
+    }
+    return null;
+}
+
+function retrieveCountEmployees() {
+    $sql = "SELECT COUNT(employee_id) as \"count\" FROM EMPLOYEES";
+
+    $conn = OpenConn();
+
+    try{
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: cannot get the employees count!");
+    }
+    return null;
+}
+
+function retrieveAllEmployees() {
+    $sql = "SELECT * FROM EMPLOYEES";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve employees!");
+    }
+
+    return null;
+}
+
+function retrieveAllMembers() {
+    $sql = "SELECT c.*, m.* FROM CUSTOMERS c
+            INNER JOIN MEMBERS M on c.CUSTOMER_ID = M.CUSTOMER_ID";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve members!");
+    }
+
+    return null;
+}
+
+function retrieveAllCustomers() {
+    $sql = "SELECT * FROM CUSTOMERS";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve customers!");
+    }
+
+    return null;
+}
+
+//delete functions
+// delete member is not required, since member is set to on delete cascade, which mean this function can delete members too
+function deleteCustomer($customerID) {
+    $sql = "DELETE FROM CUSTOMERS WHERE customer_id = :customerID";
+
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':customer_id', $customerID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to delete customer!");
+    }
+}
+
+function deleteEmployees($employeeID) {
+    $sql = "DELETE FROM EMPLOYEES WHERE EMPLOYEE_ID = :employee_id";
+
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':employee_id', $employeeID);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        return true;
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to delete employee!");
+    }
+}
+
+//Not sure what to really do with LIKE function below, I'll ignore it for now
+function retrieveCustomerNameLike($query) {
+    $sql = "SELECT * FROM CUSTOMERS WHERE (FIRST_NAME LIKE :query OR LAST_NAME LIKE :query)";
+    $conn = OpenConn();
+    $query = "%".$query."%";
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':query', $query);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return $result;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        die("Error: unable to retrieve employees!");
+    }
+
+    return null;
+}
+/* Outdated functions below */
+
+// TODO: Warning. Highly outdated function, separate user function into two (employees and members)
 function createUser($fname, $lname, $username, $password, $email, $user_type) {
     if (!($user_type == "customer" || $user_type == "admin")) {
         die("Invalid user type");
@@ -48,10 +691,10 @@ function checkUser($username, $email): bool
     return false;
 }
 
-function returnUserType($userID){
-    $user = $_SESSION["user_data"];
-    return $user["user_type"];
-}
+//function returnUserType($userID){
+//    $user = $_SESSION["user_data"];
+//    return $user["user_type"];
+//}
 
 //verify user (return customer/admin)
 function verifyUser($username, $password) {

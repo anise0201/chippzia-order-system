@@ -133,21 +133,19 @@ function deleteProduct($productID) {
         die("Error: unable to delete product!");
     }
 
-    return false;
 }
 
 
 //TODO: New schema, this code is no longer applicable. Will need changing soon! Product code does not exist
 // Inventory Quantity needed too
-function createProduct($productName, $productCode, $productImage, $productPrice) {
-    $sql = "INSERT INTO products(product_name, product_code, product_image, product_price) 
-            VALUES (:product_name, :product_code, :product_image, :product_price)";
+function createProduct($productName, $productImage, $productPrice) {
+    $sql = "INSERT INTO products(product_name, product_image, product_price) 
+            VALUES (:product_name, :product_image, :product_price)";
     $conn = OpenConn();
 
     try {
         $stmt = oci_parse($conn, $sql);
         oci_bind_by_name($stmt, ':product_name', $productName);
-        oci_bind_by_name($stmt, ':product_code', $productCode);
         oci_bind_by_name($stmt, ':product_image', $productImage);
         oci_bind_by_name($stmt, ':product_price', $productPrice);
 
@@ -208,3 +206,5 @@ function retrieveAllProductLike($query) {
 
     return null;
 }
+
+//TODO: Update product
