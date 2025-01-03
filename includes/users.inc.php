@@ -643,6 +643,7 @@ function retrieveCustomerNameLike($query) {
 
     return null;
 }
+
 /* Outdated functions below */
 
 // TODO: Warning. Highly outdated function, separate user function into two (employees and members)

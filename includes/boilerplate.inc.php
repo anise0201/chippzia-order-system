@@ -6,7 +6,7 @@ function head_tag_content(): void
     <meta charset='UTF-8'>
     <meta content='width=device-width, initial-scale=1, maximum-scale=5,minimum-scale=1, viewport-fit=cover' name='viewport'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">
+    <link rel=\"stylesheet\" type=\"text/css\" href=\"assets/css/style.css\">
     <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css\" />
     <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
     <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
@@ -17,8 +17,7 @@ function head_tag_content(): void
     <script src='https://code.jquery.com/jquery-3.7.0.min.js' integrity='sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=' crossorigin='anonymous'></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css' integrity='sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==' crossorigin='anonymous' referrerpolicy='no-referrer' />
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css'>
-    <link rel='stylesheet' href='/assets/css/style.css'>
-    <link rel='stylesheet' href='/assets/css/main.css'>
+    <link rel='stylesheet' href='assets/css/main.css'>
      ";
 }
 
@@ -27,7 +26,7 @@ function body_script_tag_content() {
     <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js' integrity='sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==' crossorigin='anonymous' referrerpolicy='no-referrer'></script>
     <script src='https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js'></script>
     
-    <script src='/assets/js/main.js'></script>
+    <script src='assets/js/main.js'></script>
     ";
 }
 
@@ -55,7 +54,7 @@ function header_bar($pageName){
 function nav_menu() {
     ?>
 
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <svg xmlns="http://www.w3.org/2000/svg" style=" display: none;">
         <symbol id="search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
             <title>Search</title>
             <path fill="currentColor" d="M19 3C13.488 3 9 7.488 9 13c0 2.395.84 4.59 2.25 6.313L3.281 27.28l1.439 1.44l7.968-7.969A9.922 9.922 0 0 0 19 23c5.512 0 10-4.488 10-10S24.512 3 19 3zm0 2c4.43 0 8 3.57 8 8s-3.57 8-8 8s-8-3.57-8-8s3.57-8 8-8z" />
@@ -159,7 +158,7 @@ function nav_menu() {
                                 <div class="user-items ps-5">
                                     <ul class="d-flex justify-content-end list-unstyled">
                                         <li class="pe-3">
-                                            <a href="/login.php">
+                                            <a href="login.php">
                                                 <svg class="user">
                                                     <use xlink:href="#user"></use>
                                                 </svg>

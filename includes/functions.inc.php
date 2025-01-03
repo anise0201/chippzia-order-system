@@ -5,6 +5,7 @@ require('users.inc.php');
 require('orders.inc.php');
 require('product.inc.php');
 
+define('BASE_URL', '/kerepek/');
 //functions
 function current_page(): void
 {
@@ -54,7 +55,7 @@ window.onload = function() {
 function customer_login_required(): void
 {
     if (empty($_SESSION["user_data"])){
-        header("Location: /login.php");
+        header("Location: ". BASE_URL . "login.php");
         die();
     }
     $_SESSION["user_data"] = retrieveUser($_SESSION["user_data"]["user_id"]);
