@@ -53,7 +53,6 @@ function header_bar($pageName){
 
 function nav_menu() {
     ?>
-
     <svg xmlns="http://www.w3.org/2000/svg" style=" display: none;">
         <symbol id="search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
             <title>Search</title>
@@ -137,8 +136,8 @@ function nav_menu() {
                         <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdNavbar"></button>
                     </div>
                     <div class="offcanvas-body align-item-center">
-                        <a href="/">
-                            <img src="/assets/images/icon2.jpg" width="50" height="50" >
+                        <a href="<?= BASE_URL ?>">
+                            <img src="assets/images/icon2.jpg" width="50" height="50" >
                         </a>
 
                         <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
@@ -335,6 +334,7 @@ function admin_side_bar() {
 
 function footer(){
     $date = date("Y");
+    $base_url = BASE_URL;
     echo "
     <footer id='footer' class='overflow-hidden d-flex flex-wrap justify-content-between align-items-center py-5 border-top'>
       <div class='container'>
@@ -391,16 +391,16 @@ function footer(){
                   <h5 class='widget-title pb-2'>Quick Links</h5>
                   <ul class='menu-list list-unstyled text-uppercase'>
                     <li class='menu-item pb-2'>
-                      <a href='/'>Home</a>
+                      <a href='{$base_url}'>Home</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/about.php'>About</a>
+                      <a href='{$base_url}about.php'>About</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/account/shop.php'>Shop</a>
+                      <a href='{$base_url}account/shop.php'>Shop</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/contact-us.php'>Contact</a>
+                      <a href='{$base_url}contact-us.php'>Contact</a>
                     </li>
                   </ul>
                 </div>
@@ -413,13 +413,13 @@ function footer(){
                       <a href='https://www.dhl.com/'>Track Your Order</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/faqs.php/#faqCollapse4'>Returns Policies</a>
+                      <a href='{$base_url}faqs.php/#faqCollapse4'>Returns Policies</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/contact-us.php'>Contact Us</a>
+                      <a href='{$base_url}contact-us.php'>Contact Us</a>
                     </li>
                     <li class='menu-item pb-2'>
-                      <a href='/faqs.php'>Faqs</a>
+                      <a href='{$base_url}faqs.php'>Faqs</a>
                     </li>
                   </ul>
                 </div>
@@ -446,7 +446,7 @@ function footer(){
             <div class='Shipping d-flex'>
               <p>We ship with:</p>
               <div class='card-wrap ps-2'>
-                <img src='/assets/images/dhl.png' alt='visa'>
+                <img src='assets/images/dhl.png' alt='dhl'>
               </div>
             </div>
           </div>
@@ -454,9 +454,9 @@ function footer(){
             <div class='payment-method d-flex'>
               <p>Payment options:</p>
               <div class='card-wrap ps-2'>
-                <img src='/assets/images/visa.jpg' alt='visa'>
-                <img src='/assets/images/mastercard.jpg' alt='mastercard'>
-                <img src='/assets/images/paypal.jpg' alt='paypal'>
+                <img src='assets/images/visa.jpg' alt='visa'>
+                <img src='assets/images/mastercard.jpg' alt='mastercard'>
+                <img src='assets/images/paypal.jpg' alt='paypal'>
               </div>
             </div>
           </div>

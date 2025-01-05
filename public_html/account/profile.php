@@ -4,7 +4,7 @@ require("../../includes/functions.inc.php");
 
 session_start();
 
-customer_login_required();
+member_login_required();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $postedToken = $_POST["token"];
@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 displayToast();
-$user = retrieveUser($_SESSION["user_data"]["user_id"]);
+$user = retrieveUser($_SESSION["user_data"]["customer_id"]);
 $states = retrieveStates();
 $optionStates = "";
 

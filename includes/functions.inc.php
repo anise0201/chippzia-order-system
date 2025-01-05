@@ -5,7 +5,7 @@ require('users.inc.php');
 require('orders.inc.php');
 require('product.inc.php');
 
-define('BASE_URL', '/kerepek/');
+const BASE_URL = '/kerepek/';
 //functions
 function current_page(): void
 {
@@ -52,49 +52,49 @@ window.onload = function() {
 
 
 //Requires login to access the site
-function customer_login_required(): void
+function member_login_required(): void
 {
     if (empty($_SESSION["user_data"])){
         header("Location: ". BASE_URL . "login.php");
         die();
     }
-    $_SESSION["user_data"] = retrieveUser($_SESSION["user_data"]["user_id"]);
-    if (returnUserType($_SESSION["user_data"]["user_id"]) != "customer"){
-        header("Location: /index.php");
+
+    if (returnUserType() != "member"){
+        header("Location: ". BASE_URL . "index.php");
         die();
     }
 }
 
 
 //Requires user to not be logged in to access the site (For instance, like Login page or Register page)
-function admin_login_required() {
+function employee_login_required() {
     if (empty($_SESSION["user_data"])){
-        header("Location: /login.php");
+        header("Location: ". BASE_URL . "login.php");
         die();
     }
-    $_SESSION["user_data"] = retrieveUserSimple($_SESSION["user_data"]["user_id"]);
-    if (returnUserType($_SESSION["user_data"]["user_id"]) != "admin"){
-        header("Location: /index.php");
+
+    if (returnUserType() != "employee"){
+        header("Location: ". BASE_URL . "index.php");
         die();
     }
 }
 
-//special function to prevent admin from purchase products & customer from adding producst
-function admin_forbidden(): void
+//special function to prevent admin from purchase products (for themselves) & customer from accessing admin side
+function employee_forbidden(): void
 {
     if (isset($_SESSION["user_data"])){
-        if (returnUserType($_SESSION["user_data"]["user_id"]) === "admin"){
-            header("Location: /admin/dashboard.php");
+        if (returnUserType() === "employee"){
+            header("Location: ". BASE_URL . "admin/dashboard.php");
             die();
         }
     }
 }
-function customer_forbidden(): void
+function member_forbidden(): void
 {
     if (isset($_SESSION["user_data"])){
-        if (returnUserType($_SESSION["user_data"]["user_id"]) === "customer"){
+        if (returnUserType() === "member"){
             makeToast("warning", "You are forbidden from going to that page", "Warning");
-            header("Location: /account/dashboard.php");
+            header("Location: ". BASE_URL . "account/dashboard.php");
             die();
         }
     }
@@ -129,7 +129,7 @@ function array_keys_isset_or_not($keys, $array): bool
     return true;
 }
 
-//check array keys is set
+//check array keys is empty
 function array_keys_isempty_or_not($keys, $array): bool
 {
     foreach ($keys as $key) {
@@ -144,7 +144,7 @@ function array_keys_isempty_or_not($keys, $array): bool
 
 function createLog($data): void
 {
-    $file = $_SERVER['DOCUMENT_ROOT']."/logs/log_".date("j.n.Y").".txt";
+    $file = $_SERVER['DOCUMENT_ROOT'].BASE_URL."logs/log_".date("j.n.Y").".txt";
     $fh = fopen($file, 'a');
     fwrite($fh,"\n".$data);
     fclose($fh);
@@ -314,17 +314,18 @@ function orders_adminOrders($orders) {
 
 //for dashboard admin
 function orders_adminOrdersLite($orders) {
+    $base_url = BASE_URL;
     if ($orders != null){
         foreach ($orders as $order) {
             $count = 1;
             //date
-            $date = date_create($order["date_created"]);
+            $date = date_create($order["CREATED_AT"]);
             $dateFormatted = date_format($date, "d M Y");
 
             //code
-            $orderCode = sprintf('%08d', $order["order_id"]);
-            $total = number_format((float)$order["order_price"], 2, ".", ",");
-            $statusSmall = strtolower($order["order_status"]);
+            $orderCode = sprintf('%08d', $order["ORDER_ID"]);
+            $total = number_format((float)$order["TOTAL_PRICE"], 2, ".", ",");
+            $statusSmall = strtolower($order["ORDER_STATUS"]);
             echo "
 <div>
 <div class='row mt-3 mb-1'>
@@ -334,10 +335,10 @@ function orders_adminOrdersLite($orders) {
     <div class='col'>
         <div class='row'>
             <div class='col-3 text-end mt-2'>
-                <span class='{$statusSmall}'>{$order["order_status"]}</span>
+                <span class='{$statusSmall}'>{$order["ORDER_STATUS"]}</span>
             </div>
             <div class='col'>
-            <a class='btn btn-outline-primary float-end' href='/admin/manage-orders.php'>See More Options..</a>  
+            <a class='btn btn-outline-primary float-end' href='{$base_url}admin/manage-orders.php'>See More Options..</a>  
             </div>
         </div>      
     </div>

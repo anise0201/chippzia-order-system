@@ -43,7 +43,7 @@ function retrieveAllProduct() {
 }
 
 function retrieveProductCount() {
-    $sql = "SELECT COUNT(p.product_id) as \"count\" FROM products p";
+    $sql = "SELECT COUNT(p.product_id) as \"COUNT\" FROM products p";
     $conn = OpenConn();
 
     try {

@@ -4,7 +4,7 @@ require("../../includes/functions.inc.php");
 
 session_start();
 
-customer_login_required();
+member_login_required();
 
 if (isset($_GET["q"])){
     $query = htmlspecialchars($_GET["q"]);

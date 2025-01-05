@@ -3,7 +3,7 @@ session_start();
 require("../../includes/functions.inc.php");
 
 
-customer_login_required();
+member_login_required();
 
 //check if all info are okay
 $user = $_SESSION["user_data"];

@@ -4,7 +4,7 @@ require("../../includes/functions.inc.php");
 
 session_start();
 
-customer_login_required();
+member_login_required();
 
 $orders = retrieveAllCustomerOrders($_SESSION["user_data"]["user_id"]);
 $orderCount = retrieveCustomerOrderCount($_SESSION["user_data"]["user_id"])["count"];

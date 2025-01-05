@@ -4,16 +4,19 @@ require("../../includes/functions.inc.php");
 
 session_start();
 
-admin_login_required();
+employee_login_required();
 
-$userCount = retrieveCountUsers()["count"] ?? 0;
-$productCount = retrieveProductCount()["count"] ?? 0;
-$ordersCount = retrieveOrderCount()["count"] ?? 0;
-$income = retrieveTotalIncome()["sum"] ?? 0;
+$employeeCount = retrieveCountEmployees()["COUNT"] ?? 0;
+$memberCount = retrieveCountMembers()["COUNT"] ?? 0;
+
+$userCount = $employeeCount + $memberCount;
+$productCount = retrieveProductCount()["COUNT"] ?? 0;
+$ordersCount = retrieveOrderCount()["COUNT"] ?? 0;
+$income = retrieveTotalIncome()["SUM"] ?? 0;
 
 $incomeDecimal =  number_format((float)$income, 2, '.', '');
 
-$productBought = retrieveAllProductBought()["sum"] ?? 0;
+$productBought = retrieveAllProductBought()["SUM"] ?? 0;
 $orders = retrieveAllOrders5LIMIT();
 displayToast();
 ?>

@@ -3,6 +3,6 @@ session_start();
 require("../includes/functions.inc.php");
 
 session_destroy();
-header("Location: /index.php");
+header("Location: ".BASE_URL."index.php");
 
 die();

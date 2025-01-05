@@ -9,7 +9,10 @@ require_once("functions.inc.php");
 //orders (customer**)
 // Changed the code to fit better with the new database
 function retrieveAllCustomerOrders($customerID, $limit=null) {
-    $sql = "SELECT * FROM result WHERE customer_id = :customer_id";
+    $sql = "SELECT o.*, c.*
+            FROM orders o
+            INNER JOIN customers c on c.customer_id = u.customer_id 
+            WHERE c.customer_id = :customer_id";
 
     if (isset($limit)) {
         $sql .= "  AND rownum <= " . $limit;
@@ -22,7 +25,7 @@ function retrieveAllCustomerOrders($customerID, $limit=null) {
         oci_bind_by_name($stmt, ':customer_id', $customerID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = [];
@@ -51,7 +54,8 @@ function retrieveAllCustomerOrders($customerID, $limit=null) {
 
 //orders (admin)
 function retrieveAllOrders() {
-    $sql = "SELECT o.*, c.* FROM result o
+    $sql = "SELECT o.*, c.*
+            FROM result o
             INNER JOIN customers c on c.customer_id = u.customer_id";
 
     $conn = OpenConn();
@@ -60,7 +64,7 @@ function retrieveAllOrders() {
         $stmt = oci_parse($conn, $sql);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = [];
@@ -88,10 +92,11 @@ function retrieveAllOrders() {
 }
 
 function retrieveAllOrders5LIMIT() {
-    $sql = "SELECT o.*, c.* FROM orders o
-            INNER JOIN customers c on c.customer_id = u.customer_id
+    $sql = "SELECT o.*
+            FROM ORDERS o
+            INNER JOIN customers c on c.customer_id = o.customer_id
             WHERE rownum <= 5
-            ORDER BY created_at DESC";
+            ORDER BY o.CREATED_AT DESC";
 
     $conn = OpenConn();
 
@@ -99,7 +104,7 @@ function retrieveAllOrders5LIMIT() {
         $stmt = oci_parse($conn, $sql);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = [];
@@ -136,7 +141,7 @@ function retrieveOrderCount() {
         $stmt = oci_parse($conn, $sql);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = oci_fetch_assoc($stmt);
@@ -162,7 +167,7 @@ function retrieveOrderCount() {
 
 //order count (customer)
 function retrieveCustomerOrderCount($customerID) {
-    $sql = "SELECT COUNT(o.order_id) AS \"count\" 
+    $sql = "SELECT COUNT(o.order_id) AS \"COUNT\" 
             FROM orders o 
             WHERE o.customer_id = :customer_id";
 
@@ -173,7 +178,7 @@ function retrieveCustomerOrderCount($customerID) {
         oci_bind_by_name($stmt, ':customer_id', $customerID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = oci_fetch_assoc($stmt);
@@ -198,7 +203,7 @@ function retrieveCustomerOrderCount($customerID) {
 }
 
 function retrieveCustomerOrderLineSumQuantity($customerID) {
-    $sql = "SELECT SUM(ol.quantity) as \"sum\" 
+    $sql = "SELECT SUM(ol.quantity) as \"SUM\" 
             FROM order_lines ol
             INNER JOIN orders o on ol.order_id = o.order_id AND o.customer_id = :customer_id";
 
@@ -209,9 +214,8 @@ function retrieveCustomerOrderLineSumQuantity($customerID) {
         oci_bind_by_name($stmt, ':customer_id', $customerID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
-
         $result = oci_fetch_assoc($stmt);
 
         oci_free_statement($stmt);
@@ -234,7 +238,7 @@ function retrieveCustomerOrderLineSumQuantity($customerID) {
 }
 
 function retrieveCustomerTotalSpend($customerID) {
-    $sql = "SELECT sum(order_price) as \"sum\" FROM orders
+    $sql = "SELECT sum(TOTAL_PRICE) as \"SUM\" FROM orders
             WHERE order_status = 'COMPLETED' and customer_id = :customer_id";
 
     $conn = OpenConn();
@@ -244,7 +248,7 @@ function retrieveCustomerTotalSpend($customerID) {
         oci_bind_by_name($stmt, ':customer_id', $customerID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = oci_fetch_assoc($stmt);
@@ -279,7 +283,7 @@ function retrieveAllOrderLines($orderID) {
         oci_bind_by_name($stmt, ':order_id', $orderID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = [];
@@ -408,7 +412,8 @@ function updateOrder($orderID, $orderStatus){
 }
 
 function retrieveTotalIncome() {
-    $sql = "SELECT SUM(order_price) as \"sum\" FROM orders WHERE order_status = 'COMPLETED'";
+    $sql = "SELECT SUM(TOTAL_PRICE) as \"SUM\" FROM ORDERS 
+            WHERE ORDER_STATUS = 'COMPLETED'";
 
     $conn = OpenConn();
 
@@ -416,7 +421,7 @@ function retrieveTotalIncome() {
         $stmt = oci_parse($conn, $sql);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result =  oci_fetch_assoc($stmt);
@@ -441,7 +446,7 @@ function retrieveTotalIncome() {
 
 //retrieve product bought total
 function retrieveAllProductBought() {
-    $sql = "SELECT SUM(ol.quantity) as \"sum\" FROM order_lines ol
+    $sql = "SELECT SUM(ol.quantity) as \"SUM\" FROM order_lines ol
             INNER JOIN orders o on ol.order_id = o.order_id AND o.order_status = 'COMPLETED'";
 
     $conn = OpenConn();
@@ -450,7 +455,7 @@ function retrieveAllProductBought() {
         $stmt = oci_parse($conn, $sql);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = oci_fetch_assoc($stmt);
@@ -487,7 +492,7 @@ function retrieveOrderSpecific($orderID) {
         oci_bind_by_name($stmt, ':order_id', $orderID);
 
         if (!oci_execute($stmt)) {
-            throw new Exception(oci_error($conn)['message']);
+            throw new Exception(oci_error($stmt)['message']);
         }
 
         $result = oci_fetch_assoc($stmt);

@@ -43,7 +43,8 @@ function createCustomer($fname, $lname, $phone, $address, $city, $state, $conn=n
             oci_free_statement($stmt);
         }
         CloseConn($conn);
-        die("Error: unable to create customer!");
+        makeToast("error", "Error", "Error creating customer! Please try again!");
+        return false;
     }
 }
 function createMember($fname, $lname, $email, $phone, $address, $city, $state, $username, $password) {
@@ -79,13 +80,15 @@ function createMember($fname, $lname, $email, $phone, $address, $city, $state, $
             oci_free_statement($stmt);
         }
         CloseConn($conn);
-        die("Error: unable to create member!");
+
+        makeToast("error", "Error", "Error creating members account! Please try again!");
+        return false;
     }
 }
-function createEmployee($fname, $lname, $email, $phone, $username, $password, $managerID) {
+function createEmployee($fname, $lname, $email, $phone, $username, $password, $managerID, $authorityLevel=1) {
     $conn = OpenConn();
-    $sql = "INSERT INTO EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, USERNAME, PASSWORD_HASH, EMAIL, PHONE, MANAGER_ID)
-            VALUES (EMPLOYEE_SEQ.NEXTVAL, :firstname, :lastname, :username,:passwordhash, :email, :phone, :managerid)";
+    $sql = "INSERT INTO EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, USERNAME, PASSWORD_HASH, EMAIL, PHONE, MANAGER_ID, AUTHORITY_LEVEL)
+            VALUES (EMPLOYEE_SEQ.NEXTVAL, :firstname, :lastname, :username,:passwordhash, :email, :phone, :managerid, :authoritylevel)";
 
     try {
         $stmt = oci_parse($conn, $sql);
@@ -98,6 +101,7 @@ function createEmployee($fname, $lname, $email, $phone, $username, $password, $m
         oci_bind_by_name($stmt, ':email', $email);
         oci_bind_by_name($stmt, ':phone', $phone);
         oci_bind_by_name($stmt, ':managerid', $managerID);
+        oci_bind_by_name($stmt, ':authoritylevel', $authorityLevel);
 
         if (!oci_execute($stmt)) {
             throw new Exception(oci_error($stmt)['message']);
@@ -114,12 +118,14 @@ function createEmployee($fname, $lname, $email, $phone, $username, $password, $m
             oci_free_statement($stmt);
         }
         CloseConn($conn);
-        die("Error: unable to create employee!");
+        makeToast("error", "Error", "Error creating employees account! Please try again!");
+        return false;
     }
 }
 
-function checkMember($username, $email) {
-    $sql = "SELECT * FROM members WHERE USERNAME = :username AND EMAIL = :email";
+function checkMember($username, $email)
+{
+    $sql = "SELECT * FROM members WHERE USERNAME = :username OR EMAIL = :email";
     $conn = OpenConn();
 
     try {
@@ -146,20 +152,68 @@ function checkMember($username, $email) {
             oci_free_statement($stmt);
         }
         CloseConn($conn);
-        die("Error: unable to check member!");
+        makeToast("error", "Error", "Error checking members! Please try again!");
+    }
+
+    return false;
+}
+
+function checkEmployee($username, $email)
+{
+    $sql = "SELECT * FROM EMPLOYEES WHERE USERNAME = :username OR EMAIL = :email";
+    $conn = OpenConn();
+
+    try {
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ':username', $username);
+        oci_bind_by_name($stmt, ':email', $email);
+
+        if (!oci_execute($stmt)) {
+            throw new Exception(oci_error($stmt)['message']);
+        }
+
+        $result = oci_fetch_assoc($stmt);
+
+        oci_free_statement($stmt);
+        CloseConn($conn);
+
+        if ($result) {
+            return true;
+        }
+    }
+    catch (Exception $e) {
+        createLog($e->getMessage());
+        if (isset($stmt)) {
+            oci_free_statement($stmt);
+        }
+        CloseConn($conn);
+        makeToast("error", "Error", "Error checking employees! Please try again!");
     }
 
     return false;
 }
 
 function returnUserType(){
-    $user = $_SESSION["user_data"];
-    return $user["user_type"];
+    return $_SESSION["user_data"]["user_type"];
 }
 
 function verifyMember($username_input, $password) {
     //username input since it can either be email or username :)
-    $sql = "SELECT c.* FROM CUSTOMERS c
+    $sql = "SELECT 
+                c.customer_id AS customer_id,
+                c.first_name AS first_name,
+                c.last_name AS last_name,
+                c.phone AS phone,
+                c.address AS address,
+                c.city AS city,
+                c.state AS state,
+                c.created_at AS created_at,
+                c.deleted_at AS deleted_at,
+                m.email AS email,
+                m.username AS username,
+                m.password_hash AS password_hash,
+                m.loyalty_points AS loyalty_points
+            FROM CUSTOMERS c
             INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
             AND (m.USERNAME = :usernameinput OR m.EMAIL = :usernameinput)";
 
@@ -179,7 +233,7 @@ function verifyMember($username_input, $password) {
         CloseConn($conn);
 
         if ($result) {
-            if (password_verify($password, $result["password_hash"])){
+            if (password_verify($password, $result["PASSWORD_HASH"])){
                 return $result;
             }
         }
@@ -198,7 +252,19 @@ function verifyMember($username_input, $password) {
 
 //Since employee and member has been separated, we will need to separate function to verify too
 function verifyEmployee($username_input, $password) {
-    $sql = "SELECT * FROM EMPLOYEES
+    $sql = "SELECT
+                employee_id AS employee_id,
+                first_name AS first_name,
+                last_name AS last_name,
+                username AS username,
+                password_hash AS password_hash,
+                email AS email,
+                phone AS phone,
+                authority_level AS authority_level,
+                created_at AS created_at,
+                deleted_at AS deleted_at,
+                manager_id AS manager_id
+            FROM EMPLOYEES
             WHERE (USERNAME = :usernameinput OR EMAIL = :usernameinput)";
 
     $conn = OpenConn();
@@ -217,7 +283,7 @@ function verifyEmployee($username_input, $password) {
         CloseConn($conn);
 
         if ($result) {
-            if (password_verify($password, $result["password_hash"])){
+            if (password_verify($password, $result["PASSWORD_HASH"])){
                 return $result;
             }
         }
@@ -238,7 +304,21 @@ function verifyEmployee($username_input, $password) {
 // no longer exist in database
 
 function retrieveMember($customerID) {
-    $sql = "SELECT c.*, m.* FROM CUSTOMERS c
+    $sql = "SELECT 
+                c.customer_id AS customer_id,
+                c.first_name AS first_name,
+                c.last_name AS last_name,
+                c.phone AS phone,
+                c.address AS address,
+                c.city AS city,
+                c.state AS state,
+                c.created_at AS created_at,
+                c.deleted_at AS deleted_at,
+                m.email AS email,
+                m.username AS username,
+                m.password_hash AS password_hash,
+                m.loyalty_points AS loyalty_points
+            FROM CUSTOMERS c
             INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
             WHERE c.CUSTOMER_ID = :customerID";
 
@@ -275,7 +355,19 @@ function retrieveMember($customerID) {
     die();
 }
 function retrieveEmployee($employeeID) {
-    $sql = "SELECT * from EMPLOYEES
+    $sql = "SELECT
+                employee_id AS employee_id,
+                first_name AS first_name,
+                last_name AS last_name,
+                username AS username,
+                password_hash AS password_hash,
+                email AS email,
+                phone AS phone,
+                authority_level AS authority_level,
+                created_at AS created_at,
+                deleted_at AS deleted_at,
+                manager_id AS manager_id
+            FROM EMPLOYEES
             WHERE EMPLOYEE_ID = :employeeID";
 
     $conn = OpenConn();
@@ -346,7 +438,7 @@ function updateCustomerContact($customerID, $contact){
 
 //admin functions
 function retrieveCountCustomers() {
-    $sql = "SELECT COUNT(customer_id) as \"count\" FROM CUSTOMERS";
+    $sql = "SELECT COUNT(customer_id) as \"COUNT\" FROM CUSTOMERS";
 
     $conn = OpenConn();
 
@@ -379,7 +471,7 @@ function retrieveCountCustomers() {
 
 //Specifically count only members
 function retrieveCountMembers() {
-    $sql = "SELECT COUNT(customer_id) as \"count\" FROM MEMBERS";
+    $sql = "SELECT COUNT(customer_id) as \"COUNT\" FROM MEMBERS";
 
     $conn = OpenConn();
 
@@ -443,7 +535,19 @@ function retrieveCountEmployees() {
 }
 
 function retrieveAllEmployees() {
-    $sql = "SELECT * FROM EMPLOYEES";
+    $sql = "SELECT
+                employee_id AS employee_id,
+                first_name AS first_name,
+                last_name AS last_name,
+                username AS username,
+                password_hash AS password_hash,
+                email AS email,
+                phone AS phone,
+                authority_level AS authority_level,
+                created_at AS created_at,
+                deleted_at AS deleted_at,
+                manager_id AS manager_id
+            FROM EMPLOYEES";
     $conn = OpenConn();
 
     try {
@@ -478,7 +582,21 @@ function retrieveAllEmployees() {
 }
 
 function retrieveAllMembers() {
-    $sql = "SELECT c.*, m.* FROM CUSTOMERS c
+    $sql = "SELECT
+                c.customer_id AS customer_id,
+                c.first_name AS first_name,
+                c.last_name AS last_name,
+                c.phone AS phone,
+                c.address AS address,
+                c.city AS city,
+                c.state AS state,
+                c.created_at AS created_at,
+                c.deleted_at AS deleted_at,
+                m.email AS email,
+                m.username AS username,
+                m.password_hash AS password_hash,
+                m.loyalty_points AS loyalty_points
+            FROM CUSTOMERS c
             INNER JOIN MEMBERS M on c.CUSTOMER_ID = M.CUSTOMER_ID";
     $conn = OpenConn();
 
@@ -514,7 +632,17 @@ function retrieveAllMembers() {
 }
 
 function retrieveAllCustomers() {
-    $sql = "SELECT * FROM CUSTOMERS";
+    $sql = "SELECT
+                customer_id AS customer_id,
+                first_name AS first_name,
+                last_name AS last_name,
+                phone AS phone,
+                address AS address,
+                city AS city,
+                state AS state,
+                created_at AS created_at,
+                deleted_at AS deleted_at
+            FROM CUSTOMERS";
     $conn = OpenConn();
 
     try {
@@ -608,7 +736,17 @@ function deleteEmployees($employeeID) {
 
 //Not sure what to really do with LIKE function below, I'll ignore it for now
 function retrieveCustomerNameLike($query) {
-    $sql = "SELECT * FROM CUSTOMERS WHERE (FIRST_NAME LIKE :query OR LAST_NAME LIKE :query)";
+    $sql = "SELECT 
+                customer_id AS customer_id,
+                first_name AS first_name,
+                last_name AS last_name,
+                phone AS phone,
+                address AS address,
+                city AS city,
+                state AS state,
+                created_at AS created_at,
+                deleted_at AS deleted_at
+            FROM CUSTOMERS WHERE (FIRST_NAME LIKE :query OR LAST_NAME LIKE :query)";
     $conn = OpenConn();
     $query = "%".$query."%";
 
@@ -671,31 +809,6 @@ function createUser($fname, $lname, $username, $password, $email, $user_type) {
 
     return false;
 }
-//check user exists
-function checkUser($username, $email): bool
-{
-    $sql = "SELECT * FROM users WHERE username = ? OR user_email = ?";
-    $conn = OpenConn();
-
-    try {
-        $result = $conn->execute_query($sql, [$username, $email]);
-        CloseConn($conn);
-
-        if (mysqli_num_rows($result) > 0) {
-            return true;
-        }
-    }
-    catch(mysqli_sql_exception){
-        createLog($conn->error);
-        die("Error: cannot get the user!");
-    }
-    return false;
-}
-
-//function returnUserType($userID){
-//    $user = $_SESSION["user_data"];
-//    return $user["user_type"];
-//}
 
 //verify user (return customer/admin)
 function verifyUser($username, $password) {

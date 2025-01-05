@@ -4,7 +4,7 @@ require("../../includes/functions.inc.php");
 
 session_start();
 
-admin_login_required();
+employee_login_required();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $postedToken = $_POST["token"];

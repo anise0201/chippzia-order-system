@@ -3,7 +3,7 @@ session_start();
 require("../../includes/functions.inc.php");
 
 
-customer_login_required();
+member_login_required();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $postedToken = $_POST["token"];

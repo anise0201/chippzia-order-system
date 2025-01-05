@@ -2,22 +2,33 @@
 session_start();
 require("../includes/functions.inc.php");
 
-admin_forbidden();
-customer_forbidden();
+employee_forbidden();
+member_forbidden();
 
 // check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
     $username = filter_var($_POST["username"], FILTER_SANITIZE_SPECIAL_CHARS);
     $password = filter_var($_POST["password"], FILTER_SANITIZE_SPECIAL_CHARS);
+    $userType = filter_var($_POST["usertype"], FILTER_SANITIZE_SPECIAL_CHARS);
 
-    $userData = verifyUser($username, $password);
+    if (empty($username) || empty($password)) {
+        makeToast("error", "Either username or password is empty", "Error");
+    }
+
+    $userData = null;
+    if ($userType == "member") {
+        $userData = verifyMember($username, $password);
+    }
+    else if ($userType == "employee") {
+        $userData = verifyEmployee($username, $password);
+    }
 
     if (isset($userData)) {
+        $userData["user_type"] = $userType;
         $_SESSION["user_data"] = $userData;
         makeToast("success", "You are now logged in!", "Success");
-        header("Location: /index.php");
+        header("Location: ". BASE_URL . "index.php");
     }
     else {
         makeToast("error", "Either username or password is incorrect.", "Error");
@@ -47,6 +58,16 @@ displayToast();
                         <h2 class="text-center mb-4">Login</h2>
                         <form>
                             <div class="mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="usertype" id="usertype1" value="member" checked>
+                                    <label class="form-check-label" for="usertype1">Member</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="usertype" id="usertype2" value="employee">
+                                    <label class="form-check-label" for="usertype2">Employee</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username">
                             </div>
@@ -58,7 +79,7 @@ displayToast();
                                 <button type="submit" class="btn btn-primary">Login</button>
                             </div>
                             <div class="text-center mt-2">
-                                <span>Don't have an account? <a class="text-decoration-none" href="/register.php">Register now!</a></span>
+                                <span>Don't have an account? <a class="text-decoration-none" href="<?= BASE_URL ?>register.php">Register now!</a></span>
                             </div>
                         </form>
                     </div>

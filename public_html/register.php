@@ -2,27 +2,33 @@
 session_start();
 require("../includes/functions.inc.php");
 
-admin_forbidden();
-customer_forbidden();
+employee_forbidden();
+member_forbidden();
 
 // check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    //This function will specifically create members
     $postedToken = $_POST["token"];
     try{
         if(!empty($postedToken)){
             if(isTokenValid($postedToken)){
-                $fname = htmlspecialchars($_POST["fname"]);
-                $lname = htmlspecialchars($_POST["lname"]);
+                $firstname = htmlspecialchars($_POST["fname"]);
+                $lastname = htmlspecialchars($_POST["lname"]);
                 $email = filter_var($_POST["email"], FILTER_SANITIZE_SPECIAL_CHARS);
                 $username = filter_var($_POST["username"], FILTER_SANITIZE_SPECIAL_CHARS);
                 $password = filter_var($_POST["password"], FILTER_SANITIZE_SPECIAL_CHARS);
 
-                //check if exists
-                $user = checkUser($username, $email);
-                //create account
-                if (!$user) {
-                    if (createUser($fname, $lname, $username, $password, $email, "customer")){
+//                //check if exists
+//                $user = checkUser($username, $email);
+//                if (!$user) {
+//                    if (createUser($firstname, $lastname, $username, $password, $email, "customer")){
+//                        makeToast("info", "Success", "Account successfully created!");
+//                    }
+//                }
+                $member = checkMember($username, $email);
+                if(!$member){
+                    if (createMember($firstname, $lastname, $email, null, null, null, null, $username, $password)){
                         makeToast("info", "Success", "Account successfully created!");
                     }
                 }
@@ -42,9 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /register.php");
+    header("Location: ". BASE_URL . "register.php");
     die();
-
 
 }
 
@@ -71,7 +76,7 @@ $token = getToken();
         <div class="container my-5">
             <div class="row mt-5">
                 <div class="col-md-6 offset-md-3">
-                    <h2 class="text-center mb-4">Registration</h2>
+                    <h2 class="text-center mb-4">Member Registration</h2>
                     <form action="<?php current_page();?>" method="post">
                         <div class="row mb-3">
                             <div class="col">
@@ -105,7 +110,7 @@ $token = getToken();
                             <button type="submit" class="btn btn-primary">Register</button>
                         </div>
                         <div class="text-center mt-2">
-                            <span>Already have an account? <a class="text-decoration-none" href="/login.php">Login here!</a></span>
+                            <span>Already have an account? <a class="text-decoration-none" href="<?= BASE_URL ?>login.php">Login here!</a></span>
                         </div>
                     </form>
                 </div>
@@ -115,7 +120,7 @@ $token = getToken();
     <?php footer(); ?>
 </div>
 <?php body_script_tag_content(); ?>
-<script type="text/javascript" src="/assets/js/register.js"></script>
+<script type="text/javascript" src="assets/js/register.js"></script>
 </body>
 </html>
 
