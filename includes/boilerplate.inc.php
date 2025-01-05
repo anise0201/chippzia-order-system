@@ -157,14 +157,21 @@ function nav_menu() {
                                 <div class="user-items ps-5">
                                     <ul class="d-flex justify-content-end list-unstyled">
                                         <li class="pe-3">
-                                            <a href="login.php">
+                                            <?php
+                                            if (isset($_SESSION['user_data'])) {
+                                                echo("Welcome, ".$_SESSION['user_data']['USERNAME']);
+                                            }
+                                            ?>
+                                        </li>
+                                        <li class="pe-3">
+                                            <a href="<?= BASE_URL ?>login.php">
                                                 <svg class="user">
                                                     <use xlink:href="#user"></use>
                                                 </svg>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="order/cart.php">
+                                            <a href="<?= BASE_URL ?>order/cart.php">
                                                 <svg class="cart">
                                                     <use xlink:href="#cart"></use>
                                                 </svg>
@@ -270,13 +277,14 @@ function admin_header_bar($pageName){
 
 function admin_side_bar() {
     $iconSize = "h4";
+    $base_url = BASE_URL;
     echo "
 <div id='sidebar' class='collapse collapse-horizontal show border-end sticky-top'>
     <div class='d-flex flex-column flex-shrink-0 p-3 bg-light vh-100 sidebar mx-w-100'>
         <div class='row gx-3'>
             <div class='col-5'>
-                <a href='/' class='d-flex align-items-center me-md-auto link-dark text-decoration-none'>
-                    <img class='me-2' width='150' height='73' src='/assets/images/icon2.jpg'>
+                <a href='{$base_url}' class='d-flex align-items-center me-md-auto link-dark text-decoration-none'>
+                    <img class='me-2' width='150' height='73' src='{$base_url}assets/images/icon2.jpg'>
                 </a>
             </div>
             <div class='col d-sm-none'>
@@ -287,31 +295,31 @@ function admin_side_bar() {
         <hr>
         <ul class='nav nav-pills flex-column mb-auto'>
             <li class='nav-item'>
-                <a href='/' class='nav-link link-dark'>
+                <a href='{$base_url}' class='nav-link link-dark'>
                     <i class='bi bi-house-door me-2 $iconSize'></i>
                     Home
                 </a>
             </li>
             <li>
-                <a href='/admin/dashboard.php' class='nav-link link-dark'>
+                <a href='{$base_url}admin/dashboard.php' class='nav-link link-dark'>
                     <i class='bi bi-speedometer2 me-2 $iconSize'></i>
                     Dashboard
                 </a>
             </li>
             <li>
-                <a href='/admin/manage-orders.php' class='nav-link link-dark'>
+                <a href='{$base_url}admin/manage-orders.php' class='nav-link link-dark'>
                     <i class='bi bi-cart-check me-2 $iconSize'></i>
                     Orders
                 </a>
             </li>
             <li>
-                <a href='/admin/manage-products.php' class='nav-link link-dark'>
+                <a href='{$base_url}admin/manage-products.php' class='nav-link link-dark'>
                     <i class='bi bi-box-seam me-2 $iconSize'></i>
                     Products
                 </a>
             </li>
             <li>
-                <a href='/admin/manage-users.php' class='nav-link link-dark'>
+                <a href='{$base_url}admin/manage-users.php' class='nav-link link-dark'>
                     <i class='bi bi-people me-2 $iconSize'></i>
                     Users
                 </a>
@@ -320,11 +328,11 @@ function admin_side_bar() {
         <hr>
         <div class='dropdown'>
             <a href='#' class='d-flex align-items-center link-dark text-decoration-none dropdown-toggle' id='dropdownUser2' data-bs-toggle='dropdown' aria-expanded='false'>
-                <img src='/assets/images/default-profile.svg' alt='' width='32' height='32' class='rounded-circle me-2'>
-                <strong>{$_SESSION["user_data"]["username"]}</strong>
+                <img src='{$base_url}assets/images/default-profile.svg' alt='' width='32' height='32' class='rounded-circle me-2'>
+                <strong>{$_SESSION["user_data"]["USERNAME"]}</strong>
             </a>
             <ul class='dropdown-menu text-small shadow' aria-labelledby='dropdownUser2'>
-                <li><a class='dropdown-item' href='/logout.php'>Log out</a></li>
+                <li><a class='dropdown-item' href='{$base_url}logout.php'>Log out</a></li>
             </ul>
         </div>
     </div>

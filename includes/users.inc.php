@@ -252,18 +252,7 @@ function verifyMember($username_input, $password) {
 
 //Since employee and member has been separated, we will need to separate function to verify too
 function verifyEmployee($username_input, $password) {
-    $sql = "SELECT
-                employee_id AS employee_id,
-                first_name AS first_name,
-                last_name AS last_name,
-                username AS username,
-                password_hash AS password_hash,
-                email AS email,
-                phone AS phone,
-                authority_level AS authority_level,
-                created_at AS created_at,
-                deleted_at AS deleted_at,
-                manager_id AS manager_id
+    $sql = "SELECT *
             FROM EMPLOYEES
             WHERE (USERNAME = :usernameinput OR EMAIL = :usernameinput)";
 
