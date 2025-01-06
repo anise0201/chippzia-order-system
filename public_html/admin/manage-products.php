@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     die();
 }
 
-$productCount = retrieveProductCount()["count"] ?? 0;
+$productCount = retrieveProductCount()["COUNT"] ?? 0;
 
 $products = retrieveAllProduct();
 
@@ -132,20 +132,21 @@ $token = getToken();
                                 </thead>
                                 <tbody>
                                 <?php
+                                $base_url = BASE_URL;
                                 if ($products != null){
                                     foreach ($products as $product){
-                                        $price = number_format((float)$product["product_price"], 2, ".", ",");
+                                        $price = number_format((float)$product["PRODUCT_PRICE"], 2, ".", ",");
                                         echo "
                                             <tr class='align-middle'>
-                                                <th scope='row'>{$product["product_code"]}</th>
-                                                <td><img class='img-fluid w-100' src='{$product["product_image"]}' style='max-width: 200px;'></td>
-                                                <td>{$product["product_name"]}</td>
+                                                <th scope='row'>{$product["PRODUCT_ID"]}</th>
+                                                <td><img class='img-fluid w-100' src='{$product["PRODUCT_IMAGE"]}' style='max-width: 200px;'></td>
+                                                <td>{$product["PRODUCT_NAME"]}</td>
                                                 <td>RM{$price}</td>
                                                 <td class='text-center'>
-                                                     <form action='/admin/manage-products.php' id='{$product["product_id"]}' method='post'>
-                                                        <input type='hidden' name='product_id' value='{$product["product_id"]}'>
+                                                     <form action='{$base_url}admin/manage-products.php' id='{$product["PRODUCT_ID"]}' method='post'>
+                                                        <input type='hidden' name='product_id' value='{$product["PRODUCT_ID"]}'>
                                                         <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                                                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$product["product_id"]}, \"modal-btn-delete\");' class='h4'> 
+                                                        <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$product["PRODUCT_ID"]}, \"modal-btn-delete\");' class='h4'> 
                                                         <i class='bi bi-trash'></i></a>
                                                     </form>   
                                                 </td>
@@ -153,7 +154,10 @@ $token = getToken();
                                     }
                                 }
                                 else {
-                                    echo "<span class='text-center'>No products</span>";
+                                    echo "
+                                        <tr class='align-middle'>
+                                        <td class='text-center' colspan='5'>No products</td> 
+                                        </tr>";
                                 }
                                 ?>
                                 </tbody>
@@ -169,7 +173,7 @@ $token = getToken();
                                     <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                 </div>
                                 <div class='modal-body'>
-                                    <form id="product" action="/admin/manage-products.php" method="post" enctype="multipart/form-data">
+                                    <form id="product" action="<?= BASE_URL ?>admin/manage-products.php" method="post" enctype="multipart/form-data">
                                         <div class="row px-2 mb-1">
                                             <label for="product-name" class="form-label">Product Name:</label>
                                             <input type="text" class="form-control" id="product-name" name="product_name" placeholder="Enter product name here" required>
@@ -234,7 +238,7 @@ $token = getToken();
     </div>
 </div>
 <?php body_script_tag_content();?>
-<script type="text/javascript" src="/assets/js/modal.js"></script>
+<script type="text/javascript" src="<?= BASE_URL ?>assets/js/modal.js"></script>
 </body>
 
 </html>

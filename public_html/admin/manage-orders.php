@@ -100,15 +100,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new exception("Token not found");
         }
     }
-    catch (exception $e){
+    catch (Exception $e){
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /admin/manage-orders.php");
+    header("Location: ".BASE_URL."admin/manage-orders.php");
     die();
 }
 
-$orderCount = retrieveOrderCount()["count"] ?? 0;
+$orderCount = retrieveOrderCount()["COUNT"] ?? 0;
 $orders = retrieveAllOrders();
 
 displayToast();
@@ -203,7 +203,7 @@ $token = getToken();
     </div>
 </div>
 <?php body_script_tag_content();?>
-<script type="text/javascript" src="/assets/js/modal.js"></script>
+<script type="text/javascript" src="<?= BASE_URL ?>assets/js/modal.js"></script>
 </body>
 
 </html>

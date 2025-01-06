@@ -40,7 +40,7 @@ displayToast();
             <div class="container">
                 <div class="row mt-4 gx-4 ms-3">
                     <!-- USER COUNT -->
-                    <div class="col ">
+                    <div class="col">
                         <div class="shadow p-3 mb-5 bg-body rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
@@ -108,7 +108,7 @@ displayToast();
                     </div>
 
                     <!-- INCOME -->
-                    <div class="col-3">
+                    <div class="col-sm-auto col-md-3">
                         <div class="shadow p-3 mb-5 gradient-primary rounded row gx-3 h-75">
                             <div class="col">
                                 <div class="row">
@@ -132,7 +132,7 @@ displayToast();
                             <div class="row mb-3">
                                 <span class="h3">Recent Orders</span>
                             </div>
-                            <div class="row">
+                            <div class="row align-items-center">
                                 <?php
                                 orders_adminOrdersLite($orders);
                                 ?>

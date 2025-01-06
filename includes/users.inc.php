@@ -199,20 +199,7 @@ function returnUserType(){
 
 function verifyMember($username_input, $password) {
     //username input since it can either be email or username :)
-    $sql = "SELECT 
-                c.customer_id AS customer_id,
-                c.first_name AS first_name,
-                c.last_name AS last_name,
-                c.phone AS phone,
-                c.address AS address,
-                c.city AS city,
-                c.state AS state,
-                c.created_at AS created_at,
-                c.deleted_at AS deleted_at,
-                m.email AS email,
-                m.username AS username,
-                m.password_hash AS password_hash,
-                m.loyalty_points AS loyalty_points
+    $sql = "SELECT c.*, m.*
             FROM CUSTOMERS c
             INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
             AND (m.USERNAME = :usernameinput OR m.EMAIL = :usernameinput)";
@@ -492,7 +479,7 @@ function retrieveCountMembers() {
 }
 
 function retrieveCountEmployees() {
-    $sql = "SELECT COUNT(employee_id) as \"count\" FROM EMPLOYEES";
+    $sql = "SELECT COUNT(employee_id) as \"COUNT\" FROM EMPLOYEES";
 
     $conn = OpenConn();
 
@@ -525,17 +512,7 @@ function retrieveCountEmployees() {
 
 function retrieveAllEmployees() {
     $sql = "SELECT
-                employee_id AS employee_id,
-                first_name AS first_name,
-                last_name AS last_name,
-                username AS username,
-                password_hash AS password_hash,
-                email AS email,
-                phone AS phone,
-                authority_level AS authority_level,
-                created_at AS created_at,
-                deleted_at AS deleted_at,
-                manager_id AS manager_id
+                *
             FROM EMPLOYEES";
     $conn = OpenConn();
 
@@ -572,19 +549,7 @@ function retrieveAllEmployees() {
 
 function retrieveAllMembers() {
     $sql = "SELECT
-                c.customer_id AS customer_id,
-                c.first_name AS first_name,
-                c.last_name AS last_name,
-                c.phone AS phone,
-                c.address AS address,
-                c.city AS city,
-                c.state AS state,
-                c.created_at AS created_at,
-                c.deleted_at AS deleted_at,
-                m.email AS email,
-                m.username AS username,
-                m.password_hash AS password_hash,
-                m.loyalty_points AS loyalty_points
+                c.*, m.*
             FROM CUSTOMERS c
             INNER JOIN MEMBERS M on c.CUSTOMER_ID = M.CUSTOMER_ID";
     $conn = OpenConn();

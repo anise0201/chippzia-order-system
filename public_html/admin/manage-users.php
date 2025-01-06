@@ -45,13 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     die();
 }
 
-$usersCount = retrieveCountUsers()["count"] ?? 0;
-$adminsCount = retrieveCountAdminUsers()["count"] ?? 0;
-$customersCount = retrieveCountCustomerUsers()["count"] ?? 0;
+$membersCount = retrieveCountMembers()['COUNT'] ?? 0;
+$employeeCount = retrieveCountEmployees()['COUNT'] ?? 0;
 
+$userCount = $membersCount + $employeeCount;
 
-$adminUsers = retrieveAllAdminUsers();
-$customerUsers = retrieveAllCustomerUsers();
+$employees = retrieveAllEmployees();
+$members = retrieveAllMembers();
 
 displayToast();
 $token = getToken();
@@ -77,13 +77,13 @@ $token = getToken();
                 <div class="row mt-4 gx-4 ms-3">
                     <div class="p-3 mb-5 bg-body rounded row gx-3">
                         <div class="row">
-                            <span class="h3"><?= $usersCount ?> users found</span>
+                            <span class="h3"><?= $userCount ?> users found</span>
                         </div>
                         <div class="shadow p-3 mb-5 mt-3 bg-body rounded row gx-3 mx-1">
                             <!-- ADMIN-->
                             <div class="row mb-1">
                                 <div class="col">
-                                    <span class="h3"><?= $adminsCount ?> admins found</span>
+                                    <span class="h3"><?= $employeeCount ?> employees found</span>
                                 </div>
                                 <div class="col text-end ">
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#adminStatic">
@@ -105,7 +105,7 @@ $token = getToken();
                                     </thead>
                                     <tbody>
                                         <?php
-                                        admin_displayAdminUsers($adminUsers);
+                                        admin_displayEmployeeUsers($employees);
                                         ?>
                                     </tbody>
                                 </table>
@@ -114,7 +114,7 @@ $token = getToken();
                         <div class="shadow p-3 mb-5 bg-body rounded row gx-3 mx-1">
                             <!-- CUSTOMER -->
                             <div class="row">
-                                <span class="h3"><?= $customersCount ?> customers found</span>
+                                <span class="h3"><?= $membersCount ?> members found</span>
                             </div>
                             <div class="row mt-3 px-3 table-responsive">
                                 <table class="table table-hover">
@@ -132,7 +132,7 @@ $token = getToken();
                                     </thead>
                                     <tbody>
                                     <?php
-                                    admin_displayCustomerUsers($customerUsers);
+                                    admin_displayMemberUsers($members);
                                     ?>
                                     </tbody>
                                 </table>
@@ -148,7 +148,7 @@ $token = getToken();
                                     <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                 </div>
                                 <div class='modal-body'>
-                                    <form id="admin" action="/admin/manage-users.php" method="post">
+                                    <form id="admin" action="<?= BASE_URL ?>admin/manage-users.php" method="post">
                                         <div class="row mb-1">
                                             <div class="col" id="name">
                                                 <label for="first-name" class="form-label">First Name</label>
@@ -219,7 +219,7 @@ $token = getToken();
     </div>
 </div>
 <?php body_script_tag_content();?>
-<script type="text/javascript" src="/assets/js/modal.js"></script>
+<script type="text/javascript" src="<?= BASE_URL ?>assets/js/modal.js"></script>
 </body>
 
 </html>

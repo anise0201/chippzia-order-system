@@ -146,7 +146,7 @@ function createLog($data): void
 {
     $file = $_SERVER['DOCUMENT_ROOT'].BASE_URL."logs/log_".date("j.n.Y").".txt";
     $fh = fopen($file, 'a');
-    fwrite($fh,"\n".$data);
+    fwrite($fh,$data);
     fclose($fh);
 }
 
@@ -213,6 +213,7 @@ function orders_userOrders($orders){
     }
 }
 function orders_adminOrders($orders) {
+    $base_url = BASE_URL;
     if ($orders != null){
         $statusOptions = "
         <option value='PENDING'>Pending</option>
@@ -221,50 +222,50 @@ function orders_adminOrders($orders) {
         foreach ($orders as $order) {
             $count = 1;
             //date
-            $date = date_create($order["date_created"]);
+            $date = date_create($order["CREATED_AT"]);
             $dateFormatted = date_format($date, "d M Y");
 
-            $orderLines = retrieveAllOrderLines($order["order_id"]);
+            $orderLines = retrieveAllOrderLines($order["ORDER_ID"]);
             $orderLineStr = "";
             foreach ($orderLines as $orderLine) {
-                $price = number_format((float)$orderLine["product_price"], 2, ".", ",");
+                $price = number_format((float)$orderLine["PRICE"], 2, ".", ",");
 
                 $orderLineStr .=
                     "<tr class='align-middle'>
     <th scope='row'>$count</th>
-    <td><img class='img-fluid w-100' src='{$orderLine["product_image"]}' style='max-width: 200px;'></td>
-    <td>{$orderLine["product_name"]}</td>
-    <td class='text-center'>{$orderLine["quantity"]}</td>
+    <td><img class='img-fluid w-100' src='{$orderLine["PRODUCT_IMAGE"]}' style='max-width: 200px;'></td>
+    <td>{$orderLine["PRODUCT_NAME"]}</td>
+    <td class='text-center'>{$orderLine["QUANTITY"]}</td>
     <td>$dateFormatted</td>
     <td>RM{$price}</td>
 </tr>";
                 $count++;
             }
             //code
-            $orderCode = sprintf('%08d', $order["order_id"]);
-            $total = number_format((float)$order["order_price"], 2, ".", ",");
-            $statusSmall = strtolower($order["order_status"]);
+            $orderCode = sprintf('%08d', $order["ORDER_ID"]);
+            $total = number_format((float)$order["TOTAL_PRICE"], 2, ".", ",");
+            $statusSmall = strtolower($order["ORDER_STATUS"]);
             echo "
 <div>
 <div class='row mt-3 mb-3'>
     <div class='col-5'>
-        <span class='h4'>Order #{$orderCode}</span><span class='text-muted h4'> by {$order["username"]}</span>
+        <span class='h4'>Order #{$orderCode}</span><span class='text-muted h4'> by {$order["FIRST_NAME"]} {$order["LAST_NAME"]}</span>
     </div>
     <div class='col'>
         <div class='row'>
             <div class='col-3 text-end mt-2'>
-                <span class='{$statusSmall}'>{$order["order_status"]}</span>
+                <span class='{$statusSmall}'>{$order["ORDER_STATUS"]}</span>
             </div>
             <div class='col'>
-               <form method='post' id='{$order["order_id"]}' action='/admin/manage-orders.php'>
+               <form method='post' id='{$order["ORDER_ID"]}' action='{$base_url}admin/manage-orders.php'>
                <div class='row offset-1'>
                     <div class='col'>
-                        <input type='hidden' name='order_id' value='{$order["order_id"]}'>
+                        <input type='hidden' name='order_id' value='{$order["ORDER_ID"]}'>
                         <select name='status' class='form-select'>$statusOptions</select>      
                     </div>
                     <div class='col'>
                         <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                        <a type='button' data-bs-toggle='modal' data-bs-target='#updateStatic' onclick='updateModal({$order["order_id"]}, \"modal-btn-update\");' class='btn btn-outline-primary'>
+                        <a type='button' data-bs-toggle='modal' data-bs-target='#updateStatic' onclick='updateModal({$order["ORDER_ID"]}, \"modal-btn-update\");' class='btn btn-outline-primary'>
                         Update</a>
                     </div>
                 </div>
@@ -272,10 +273,10 @@ function orders_adminOrders($orders) {
                           
             </div>
             <div class='col-1 mt-2'>
-                <form action='/admin/manage-orders.php' id='{$order["order_id"]}' method='post'>
-                    <input type='hidden' name='order_id' value='{$order["order_id"]}'>
+                <form action='/admin/manage-orders.php' id='{$order["ORDER_ID"]}' method='post'>
+                    <input type='hidden' name='order_id' value='{$order["ORDER_ID"]}'>
                     <input type='hidden' name='token' value='{$_SESSION["token"]}'>
-                    <a type='button' data-bs-toggle='modal' data-bs-target='#deleteStatic' onclick='updateModal({$order["order_id"]}, \"modal-btn-delete\");' class='h4'>
+                    <a type='button' data-bs-toggle='modal' data-bs-target='#deleteStatic' onclick='updateModal({$order["ORDER_ID"]}, \"modal-btn-delete\");' class='h4'>
                     <i class='bi bi-trash'></i></a>
                 </form>    
             </div> 
@@ -327,7 +328,6 @@ function orders_adminOrdersLite($orders) {
             $total = number_format((float)$order["TOTAL_PRICE"], 2, ".", ",");
             $statusSmall = strtolower($order["ORDER_STATUS"]);
             echo "
-<div>
 <div class='row mt-3 mb-1'>
     <div class='col-5'>
         <span class='h4'>Order #{$orderCode}</span><span class='text-muted h4'> by {$order["username"]}</span>
@@ -357,32 +357,36 @@ function orders_adminOrdersLite($orders) {
 ";
         }
     }
+    else {
+        echo "<span class='align-items-center'>No orders yet</span>";
+    }
 }
-function admin_displayAdminUsers($adminUsers) {
-    if ($adminUsers != null) {
+function admin_displayEmployeeUsers($employeeUsers) {
+    if ($employeeUsers != null) {
         $count = 1;
+        $base_url = BASE_URL;
         // OKAY, FOR DELETING, I need to use a modal so the user can be sure to remove it
-        foreach ($adminUsers as $user) {
-            $fullName = $user["user_fname"] . " " . $user["user_lname"];
-            $date = date_create($user["registration_date"]);
+        foreach ($employeeUsers as $user) {
+            $fullName = $user["FIRST_NAME"] . " " . $user["LAST_NAME"];
+            $date = date_create($user["CREATED_AT"]);
             $dateFormatted = date_format($date, "d M Y");
             echo
             "<tr class='align-middle'>
                 <th scope='row'>$count</th>
-                <td>{$user["username"]}</td>
+                <td>{$user["USERNAME"]}</td>
                 <td>{$fullName}</td>
-                <td>{$user["user_email"]}</td>
+                <td>{$user["EMAIL"]}</td>
                 <td>{$dateFormatted}</td>
                 <td class='position-relative text-center align-middle'>
                     <div class='position-absolute top-50 start-0 translate-middle-y'>
-                        <a type='button' class='h4' href='mailto:{$user["user_email"]}'>
+                        <a type='button' class='h4' href='mailto:{$user["EMAIL"]}'>
                         <i class='bi bi-envelope'></i></a>
                     </div>
                     <div class='position-absolute top-50 end-0 translate-middle-y'>
-                        <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
-                            <input type='hidden' name='user_id' value='{$user["user_id"]}'>
+                        <form action='{$base_url}admin/manage-users.php' id='{$user["EMPLOYEE_ID"]}' method='post'>
+                            <input type='hidden' name='user_id' value='{$user["EMPLOYEE_ID"]}'>
                             <a type='button' data-bs-toggle='modal' data-bs-target='#static' 
-                            onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
+                            onclick='updateModal({$user["EMPLOYEE_ID"]}, \"modal-btn\");' class='h4'>
                             <input type='hidden' name='token' value='{$_SESSION["token"]}'>
                             <i class='bi bi-trash'></i></a>
                         </form> 
@@ -395,30 +399,31 @@ function admin_displayAdminUsers($adminUsers) {
     }
 }
 
-function admin_displayCustomerUsers($customerUsers) {
-    if ($customerUsers != null) {
+function admin_displayMemberUsers($memberUsers) {
+    if ($memberUsers != null) {
+        $base_url = BASE_URL;
         $count = 1;
         // OKAY, FOR DELETING, I need to use a modal so the user can be sure to remove it
-        foreach ($customerUsers as $user) {
-            $fullName = $user["user_fname"] . " " . $user["user_lname"];
-            $date = date_create($user["registration_date"]);
+        foreach ($memberUsers as $user) {
+            $fullName = $user["FIRST_NAME"] . " " . $user["LAST_NAME"];
+            $date = date_create($user["CREATED_AT"]);
             $dateFormatted = date_format($date, "d M Y");
 
-            $address = ($user["user_address"] ?? "") . ", " . ($user["user_postcode"] ?? "")
-                        . ", " . ($user["user_city"] ?? "") . ", " . ($user["state_name"] ?? "");
-            $phone = $user["user_phone"] ?? "-";
+            $address = ($user["ADDRESS"] ?? "") . ", " . ($user["CITY"] ?? "")
+                        . ", " . ($user["STATE"] ?? "");
+            $phone = $user["PHONE"] ?? "-";
             echo
             "<tr class='align-middle'>
                 <th scope='row'>$count</th>
-                <td>{$user["username"]}</td>
+                <td>{$user["USERNAME"]}</td>
                 <td>{$fullName}</td>
                 <td>{$address}</td>
-                <td>{$user["user_email"]}</td>
+                <td>{$user["EMAIL"]}</td>
                 <td>{$phone}</td>
                 <td>{$dateFormatted}</td>
                 <td class='position-relative text-center align-middle'>
                     <div class='position-absolute top-50 start-0 translate-middle-y'>
-                        <a type='button' class='h4' href='mailto:{$user["user_email"]}'>
+                        <a type='button' class='h4' href='mailto:{$user["EMAIL"]}'>
                         <i class='bi bi-envelope'></i></a>
                     </div>
                     <div class='position-absolute top-50 start-50 translate-middle'>
@@ -426,9 +431,9 @@ function admin_displayCustomerUsers($customerUsers) {
                         <i class='bi bi-whatsapp'></i></a>
                     </div>
                     <div class='position-absolute top-50 end-0 translate-middle-y'>
-                        <form action='/admin/manage-users.php' id='{$user["user_id"]}' method='post'>
-                            <input type='hidden' name='user_id' value='{$user["user_id"]}'>
-                            <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$user["user_id"]}, \"modal-btn\");' class='h4'>
+                        <form action='{$base_url}admin/manage-users.php' id='{$user["CUSTOMER_ID"]}' method='post'>
+                            <input type='hidden' name='user_id' value='{$user["CUSTOMER_ID"]}'>
+                            <a type='button' data-bs-toggle='modal' data-bs-target='#static' onclick='updateModal({$user["CUSTOMER_ID"]}, \"modal-btn\");' class='h4'>
                             <i class='bi bi-trash'></i></a>
                             <input type='hidden' name='token' value='{$_SESSION["token"]}'>
                         </form> 

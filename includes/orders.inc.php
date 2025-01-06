@@ -55,8 +55,8 @@ function retrieveAllCustomerOrders($customerID, $limit=null) {
 //orders (admin)
 function retrieveAllOrders() {
     $sql = "SELECT o.*, c.*
-            FROM result o
-            INNER JOIN customers c on c.customer_id = u.customer_id";
+            FROM ORDERS o
+            INNER JOIN customers c on c.customer_id = o.customer_id";
 
     $conn = OpenConn();
 
@@ -133,7 +133,7 @@ function retrieveAllOrders5LIMIT() {
 
 // order count (admin)
 function retrieveOrderCount() {
-    $sql = "SELECT COUNT(o.order_id) AS \"count\" FROM orders o";
+    $sql = "SELECT COUNT(o.order_id) AS \"COUNT\" FROM orders o";
 
     $conn = OpenConn();
 

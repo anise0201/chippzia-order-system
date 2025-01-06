@@ -1,0 +1,1 @@
+ORA-00942: table or view does not existORA-00942: table or view does not existORA-00942: table or view does not existORA-00942: table or view does not existORA-00942: table or view does not exist
