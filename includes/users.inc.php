@@ -280,20 +280,7 @@ function verifyEmployee($username_input, $password) {
 // no longer exist in database
 
 function retrieveMember($customerID) {
-    $sql = "SELECT 
-                c.customer_id AS customer_id,
-                c.first_name AS first_name,
-                c.last_name AS last_name,
-                c.phone AS phone,
-                c.address AS address,
-                c.city AS city,
-                c.state AS state,
-                c.created_at AS created_at,
-                c.deleted_at AS deleted_at,
-                m.email AS email,
-                m.username AS username,
-                m.password_hash AS password_hash,
-                m.loyalty_points AS loyalty_points
+    $sql = "SELECT c.*, m.*
             FROM CUSTOMERS c
             INNER JOIN MEMBERS m ON c.CUSTOMER_ID = m.CUSTOMER_ID
             WHERE c.CUSTOMER_ID = :customerID";

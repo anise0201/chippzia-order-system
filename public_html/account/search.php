@@ -13,7 +13,7 @@ if (isset($_GET["q"])){
 }
 else {
     makeToast("Warning", "Query was not found!", "Warning");
-    header("Location: /account/dashboard.php");
+    header("Location: ".BASE_URL."account/dashboard.php");
     die();
 }
 
@@ -24,7 +24,7 @@ displayToast();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Search Result</title>
+    <title><?= WEBSITE_NAME ?> | Search Result</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -58,18 +58,19 @@ displayToast();
                                 </thead>
                                 <tbody>
                                 <?php
+                                $base_url = BASE_URL;
                                 if ($products != null){
                                     $productCount = 0;
                                     foreach ($products as $product){
-                                        $price = number_format((float)$product["product_price"], 2, ".", ",");
+                                        $price = number_format((float)$product["PRODUCT_PRICE"], 2, ".", ",");
                                         echo "
                                             <tr class='align-middle'>
-                                                <th scope='row'>{$product["product_code"]}</th>
-                                                <td><img class='img-fluid w-100' src='{$product["product_image"]}' style='max-width: 200px;'></td>
-                                                <td>{$product["product_name"]}</td>
+                                                <th scope='row'>{$product["PRODUCT_ID"]}</th>
+                                                <td><img class='img-fluid w-100' src='{$product["PRODUCT_IMAGE"]}' style='max-width: 200px;'></td>
+                                                <td>{$product["PRODUCT_NAME"]}</td>
                                                 <td>RM{$price}</td>
                                                 <td class='text-center'>
-                                                    <a type='button' class='btn btn-outline-primary' href='/account/shop.php/#{$product["product_id"]}'>
+                                                    <a type='button' class='btn btn-outline-primary' href='{$base_url}account/shop.php/#{$product["product_id"]}'>
                                                         See More
                                                     </a>                                       
                                                 </td>

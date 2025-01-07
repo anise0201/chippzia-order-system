@@ -7,17 +7,17 @@ session_start();
 member_login_required();
 
 
+$user = retrieveMember($_SESSION["user_data"]["CUSTOMER_ID"]);
 
-$user = retrieveUser($_SESSION["user_data"]["user_id"]);
-$name = $user["user_fname"] ?? "";
-$today = date_create("now");
+$name = ($user["FIRST_NAME"] ?? "") . " " . ($user["LAST_NAME"] ?? "");
+$today = date_create();
 $date = date_format($today, "D, d M Y");
 
-$ordersCount = retrieveCustomerOrderCount($user["user_id"])["count"];
-$totalSpend = retrieveCustomerTotalSpend($user["user_id"])["sum"];
-$ordersLineSum = retrieveCustomerOrderLineSumQuantity($user["user_id"])["sum"] ?? 0;
+$ordersCount = retrieveCustomerOrderCount($user["CUSTOMER_ID"])["COUNT"];
+$totalSpend = retrieveCustomerTotalSpend($user["CUSTOMER_ID"])["SUM"];
+$ordersLineSum = retrieveCustomerOrderLineSumQuantity($user["CUSTOMER_ID"])["SUM"] ?? 0;
 
-$orders = retrieveAllCustomerOrders($user["user_id"], 5);
+$orders = retrieveAllCustomerOrders($user["CUSTOMER_ID"], 5);
 $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
 ?>
 <!DOCTYPE html>
@@ -104,13 +104,13 @@ $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
                                     <span class="h3">Recent Orders</span>
                                 </div>
                                 <div class="col text-end">
-                                    <a class="btn btn-outline-primary" href="/account/orders.php">See more..</a>
+                                    <a class="btn btn-outline-primary" href="<?= BASE_URL ?>account/orders.php">See more..</a>
                                 </div>
                             </div>
                             <div class="row">
                                 <?php
                                 if ($orders != null){
-                                    orders_userOrders($orders);
+                                    orders_memberOrders($orders);
                                 }
                                 else {
                                     echo "<span class='fs-4'>No orders yet.</span>";

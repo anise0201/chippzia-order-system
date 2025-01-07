@@ -52,12 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    header("Location: /account/shop.php");
+    header("Location: ".BASE_URL."account/shop.php");
     die();
 }
 
 $products = retrieveAllProduct();
-$productCount = retrieveProductCount()["count"];
+$productCount = retrieveProductCount()["COUNT"];
 $token = getToken();
 
 displayToast();
@@ -67,7 +67,7 @@ displayToast();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Shop</title>
+    <title><?= WEBSITE_NAME ?> | Shop</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -84,7 +84,7 @@ displayToast();
                     <div class="row mt-4 gx-4 ms-3">
                         <div class="row">
                             <div class="float-end text-end mb-3">
-                                <a type="button" href="/order/cart.php" class="btn btn-primary bg-yellow-dark">
+                                <a type="button" href="<?= BASE_URL ?>order/cart.php" class="btn btn-primary bg-yellow-dark">
                                     <i class='bi bi-cart-fill text-end text-white'></i>
                                 </a>
                             </div>
@@ -92,7 +92,7 @@ displayToast();
                         </div>
                         <div class="shadow p-3 mb-5 bg-body rounded row gx-3">
                             <div class="row mb-3">
-                                <span class="h3"><?=  $productCount ?> product(s) found</span>
+                                <span class="h3"><?= $productCount ?> product(s) found</span>
                             </div>
                             <?php
                             $count = 0;
@@ -101,7 +101,7 @@ displayToast();
 
                                 foreach ($products as $product) {
                                     //price
-                                    $productCost = number_format((float)$product["product_price"], 2, '.', '');
+                                    $productCost = number_format((float)$product["PRODUCT_PRICE"], 2, '.', '');
 
                                     if ($count % 4 == 0) {
                                         echo "<div class='row'>";
@@ -111,16 +111,16 @@ displayToast();
                                 <div class='col-md-3 p-1'>
                                     <div class='align-middle text-center'>
                                           <div class='card p-3'>
-                                            <img src='{$product["product_image"]}' class='card-img-top' alt='Product Image'>
+                                            <img src='{$product["PRODUCT_IMAGE"]}' class='card-img-top' alt='Product Image'>
                                               <div class='card-body h-100'>
-                                                <h5 class='card-title'>{$product["product_name"]}</h5>
-                                                <p class='card-text'>Product Code: {$product["product_code"]}</p>
+                                                <h5 class='card-title'>{$product["PRODUCT_NAME"]}</h5>
+                                                <p class='card-text'>Product Code: {$product["PRODUCT_ID"]}</p>
                                                 <p class='card-text'>Price: RM{$productCost}</p>
            
                                                 <form action='/account/shop.php' method='post'>
                                                     <div class='row gy-2'>
                                                         <input type='number' class='form-control' name='quantity' placeholder='Quantity' min='0' max=''>
-                                                        <input type='hidden' name='product_id' value='{$product["product_id"]}'>
+                                                        <input type='hidden' name='product_id' value='{$product["PRODUCT_ID"]}'>
                                                         <input type='hidden' name='token' value='$token'>
                                                         <button type='submit' class='btn btn-dark text-white'><i class='bi bi-cart-plus'></i> Add to Cart</button>                                          
                                                     </div>

@@ -6,8 +6,8 @@ session_start();
 
 member_login_required();
 
-$orders = retrieveAllCustomerOrders($_SESSION["user_data"]["user_id"]);
-$orderCount = retrieveCustomerOrderCount($_SESSION["user_data"]["user_id"])["count"];
+$orders = retrieveAllCustomerOrders($_SESSION["user_data"]["CUSTOMER_ID"]);
+$orderCount = retrieveCustomerOrderCount($_SESSION["user_data"]["CUSTOMER_ID"])["COUNT"];
 
 ?>
 <!DOCTYPE html>
@@ -15,7 +15,7 @@ $orderCount = retrieveCustomerOrderCount($_SESSION["user_data"]["user_id"])["cou
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Orders</title>
+    <title><?= WEBSITE_NAME ?> | Orders</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -36,7 +36,7 @@ $orderCount = retrieveCustomerOrderCount($_SESSION["user_data"]["user_id"])["cou
 
                         <?php
                         if ($orders != null){
-                            orders_userOrders($orders);
+                            orders_memberOrders($orders);
                         }
 
                         ?>

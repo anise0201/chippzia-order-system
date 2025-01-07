@@ -11,7 +11,7 @@ require_once("functions.inc.php");
 function retrieveAllCustomerOrders($customerID, $limit=null) {
     $sql = "SELECT o.*, c.*
             FROM orders o
-            INNER JOIN customers c on c.customer_id = u.customer_id 
+            INNER JOIN customers c on c.customer_id = o.customer_id 
             WHERE c.customer_id = :customer_id";
 
     if (isset($limit)) {

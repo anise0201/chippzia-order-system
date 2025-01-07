@@ -71,7 +71,7 @@ function nav_menu() {
                     </div>
                     <div class="offcanvas-body align-item-center">
                         <a href="<?= BASE_URL ?>">
-                            <img src="assets/images/icon2.jpg" width="50" height="50" >
+                            <img src="<?= BASE_URL ?>assets/images/logo2.png" width="50" height="50" >
                         </a>
 
                         <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
@@ -126,12 +126,13 @@ function nav_menu() {
 
 function side_bar() {
     $iconSize = "h4";
+    $base_url = BASE_URL;
     echo "<div id='sidebar' class='collapse collapse-horizontal show border-end sticky-top'>
     <div class='d-flex flex-column flex-shrink-0 p-3 bg-light vh-100 sidebar mx-w-100'>
         <div class='row gx-3'>
             <div class='col-5'>
                 <a href='/' class='d-flex align-items-center me-md-auto link-dark text-decoration-none'>
-                    <img class='me-2' width='150' height='73' src='/assets/images/icon2.jpg'>
+                    <img class='me-2' width='150' height='73' src='{$base_url}assets/images/logo1.png'>
                 </a>
             </div>
             <div class='col d-sm-none'>
@@ -179,9 +180,9 @@ function side_bar() {
                 <strong>{$_SESSION["user_data"]["username"]}</strong>
             </a>
             <ul class='dropdown-menu text-small shadow' aria-labelledby='dropdownUser2'>
-                <li><a class='dropdown-item' href='/account/profile.php'>Profile</a></li>
+                <li><a class='dropdown-item' href='{$base_url}account/profile.php'>Profile</a></li>
                 <li><hr class='dropdown-divider'></li>
-                <li><a class='dropdown-item' href='/logout.php'>Log out</a></li>
+                <li><a class='dropdown-item' href='{$base_url}logout.php'>Log out</a></li>
             </ul>
             
         </div>
@@ -219,7 +220,7 @@ function admin_side_bar() {
         <div class='row gx-3'>
             <div class='col-5'>
                 <a href='{$base_url}' class='d-flex align-items-center me-md-auto link-dark text-decoration-none'>
-                    <img class='me-2' width='150' height='73' src='{$base_url}assets/images/icon2.jpg'>
+                    <img class='me-2' width='150' height='73' src='{$base_url}assets/images/logo1.png'>
                 </a>
             </div>
             <div class='col d-sm-none'>

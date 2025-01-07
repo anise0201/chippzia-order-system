@@ -6,6 +6,7 @@ require('orders.inc.php');
 require('product.inc.php');
 
 const BASE_URL = '/kerepek/';
+const WEBSITE_NAME = 'Chipzzia';
 //functions
 function current_page(): void
 {
@@ -151,24 +152,24 @@ function createLog($data): void
 }
 
 
-function orders_userOrders($orders){
+function orders_memberOrders($orders){
     foreach ($orders as $order) {
         $count = 1;
         //date
-        $date = date_create($order["date_created"]);
+        $date = date_create($order["CREATED_AT"]);
         $dateFormatted = date_format($date, "d M Y");
 
-        $orderLines = retrieveAllOrderLines($order["order_id"]);
+        $orderLines = retrieveAllOrderLines($order["ORDER_ID"]);
         $orderLineStr = "";
         foreach ($orderLines as $orderLine) {
-            $price = number_format((float)$orderLine["product_price"], 2, ".", ",");
+            $price = number_format((float)$orderLine["PRICE"], 2, ".", ",");
 
             $orderLineStr .=
                 "<tr class='align-middle'>
 <th scope='row'>$count</th>
-<td><img class='img-fluid w-100' src='{$orderLine["product_image"]}' style='max-width: 200px;'></td>
-<td>{$orderLine["product_name"]}</td>
-<td class='text-center'>{$orderLine["quantity"]}</td>
+<td><img class='img-fluid w-100' src='{$orderLine["PRODUCT_IMAGE"]}' style='max-width: 200px;'></td>
+<td>{$orderLine["PRODUCT_NAME"]}</td>
+<td class='text-center'>{$orderLine["QUANTITY"]}</td>
 <td>$dateFormatted</td>
 <td>RM{$price}</td>
                                     </tr>";
@@ -177,14 +178,14 @@ function orders_userOrders($orders){
 
 
         //code
-        $orderCode = sprintf('%08d', $order["order_id"]);
-        $total = number_format((float)$order["order_price"], 2, ".", ",");
-        $statusSmall = strtolower($order["order_status"]);
+        $orderCode = sprintf('%08d', $order["ORDER_ID"]);
+        $total = number_format((float)$order["TOTAL_PRICE"], 2, ".", ",");
+        $statusSmall = strtolower($order["ORDER_STATUS"]);
         echo "
 <div class='row mt-3'>
     <div class='col'><span class='h4'>Order #{$orderCode}</span></div>
     <div class='col text-end'>
-        <span class='{$statusSmall}'>{$order["order_status"]}</span>
+        <span class='{$statusSmall}'>{$order["ORDER_STATUS"]}</span>
     </div>
 </div>
 <div class='row'>

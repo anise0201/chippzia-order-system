@@ -18,8 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $contact = ["address"=>htmlspecialchars($_POST["address"]), "postcode"=>htmlspecialchars($_POST["postcode"]),
                     "city"=>htmlspecialchars($_POST["city"]), "state_code"=>htmlspecialchars($_POST["state"]),
                     "phone"=>htmlspecialchars($_POST["phone"])];
-                $userID = $_SESSION["user_data"]["user_id"];
+                $userID = $_SESSION["user_data"]["CUSTOMER_ID"];
 
+                //TODO: Change this later
                 if (updateContact($userID, $contact)){
                     makeToast('success', "Contact info is successfully updated!", "Success");
                 }
@@ -32,20 +33,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
         else {
-            throw new exception("Token not found");
+            throw new Exception("Token not found");
         }
     }
     catch (exception $e){
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /account/profile.php");
+    header("Location: ".BASE_URL."account/profile.php");
     die();
 }
 
 displayToast();
-$user = retrieveUser($_SESSION["user_data"]["customer_id"]);
-$states = retrieveStates();
+$user = retrieveMember($_SESSION["user_data"]["CUSTOMER_ID"]);
+
+//i will use api later
+$states = [
+        [
+            "state_code" => "1",
+            "state_name" => "Perak"
+        ]
+];
 $optionStates = "";
 
 foreach ($states as $state){
@@ -58,7 +66,7 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Profile</title>
+    <title><?= WEBSITE_NAME ?> | Profile</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -127,16 +135,16 @@ $token = getToken();
                             </div>
                             <div class="col mt-2">
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["username"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["USERNAME"]  ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_fname"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["FIRST_NAME"]  ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_lname"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["LAST_NAME"]  ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_email"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["EMAIL"]  ?? "-" ?></span>
                                 </div>
 
                             </div>
@@ -163,19 +171,19 @@ $token = getToken();
                             </div>
                             <div class="col mt-2">
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_address"] ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["ADDRESS"] ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_postcode"]  ?? "-"  ?></span>
+                                    <span class="fw-bold"><?= $user["POSTCODE"]  ?? "-"  ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_city"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["CITY"]  ?? "-" ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["state_name"] ?? "-"  ?></span>
+                                    <span class="fw-bold"><?= $user["STATE"] ?? "-"  ?></span>
                                 </div>
                                 <div class="row">
-                                    <span class="fw-bold"><?= $user["user_phone"]  ?? "-" ?></span>
+                                    <span class="fw-bold"><?= $user["PHONE"]  ?? "-" ?></span>
                                 </div>
 
                             </div>
