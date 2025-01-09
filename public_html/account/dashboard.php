@@ -25,7 +25,7 @@ $totalSpendDecimal = number_format((float)$totalSpend, 2, ".", ",");
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | User Dashboard</title>
+    <title><?= WEBSITE_NAME ?> | User Dashboard</title>
 </head>
 <body>
 <div class="container-fluid">

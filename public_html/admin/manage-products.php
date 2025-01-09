@@ -21,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 //create product todo
                 else if (isset($_POST["product"])) {
                     $productName = htmlspecialchars($_POST["product_name"]);
-                    $productCode = htmlspecialchars($_POST["product_code"]);
                     $productPrice = htmlspecialchars($_POST["product_price"]);
 
                     //create image
@@ -42,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     $fileNameTrue = str_replace(" ", "-", reset($fileArr));
                     $fileNameNew = $fileNameTrue . "." . $fileExt;
-                    $fileDestinationRelative = '/assets/images/' . $fileNameNew;
+                    $fileDestinationRelative = BASE_URL . 'assets/images/' . $fileNameNew;
                     $fileDestination = $_SERVER['DOCUMENT_ROOT'] . $fileDestinationRelative;
 
 
@@ -59,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
 
                     //create product
-                    createProduct($productName, $productCode, $fileDestinationRelative, $productPrice) or throw new Exception("Couldn't create product");
+                    createProduct($productName, $fileDestinationRelative, $productPrice) or throw new Exception("Couldn't create product");
 
                     makeToast("success", "Product successfully created!", "Success");
                 }
@@ -76,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /admin/manage-products.php");
+    header("Location: ".BASE_URL."admin/manage-products.php");
     die();
 }
 

@@ -311,6 +311,66 @@ function retrieveAllOrderLines($orderID) {
 }
 
 //TODO : Create Order Function Oracle (this one is MariaDB/MySQL)
+
+function createOrderMember($order_price, $customer_id, $cart, $loyalty_points=0) {
+    $sqlQueryFirst = "INSERT INTO orders(ORDER_ID, TOTAL_PRICE, CUSTOMER_ID, LOYALTY_POINTS_REDEEMED, ORDER_STATUS)
+                    VALUES (:order_id, :total_price, :customer_id, :loyalty_points, 'PENDING')";
+    $sqlQuerySecond = "INSERT INTO order_lines(order_line_id, order_id, product_id, quantity, price) 
+                    VALUES (:order_line_id, :order_id, :product_id, :quantity, :price)";
+
+    $conn = OpenConn();
+
+    try {
+
+        // Generate new order ID using ORDER_SEQ
+        $order_id_stmt = oci_parse($conn, "SELECT ORDER_SEQ.NEXTVAL AS order_id FROM dual");
+        oci_execute($order_id_stmt);
+        $row = oci_fetch_assoc($order_id_stmt);
+        $order_id = $row['ORDER_ID'];
+
+        // Insert into orders table
+        $stmt = oci_parse($conn, $sqlQueryFirst);
+        oci_bind_by_name($stmt, ':order_id', $order_id);
+        oci_bind_by_name($stmt, ':order_price', $order_price);
+        oci_bind_by_name($stmt, ':customer_id', $customer_id);
+        oci_bind_by_name($stmt, ':loyalty_points', $loyalty_points);
+
+        oci_execute($stmt, OCI_NO_AUTO_COMMIT);
+
+        // Insert each item in the cart into order_lines table
+        foreach ($cart as $item) {
+            $quantity = $item["quantity"];
+            $product = $item["product"];
+
+            // Generate new order line ID using ORDER_LINE_SEQ
+            $order_line_id_stmt = oci_parse($conn, "SELECT ORDER_LINE_SEQ.NEXTVAL AS order_line_id FROM dual");
+            oci_execute($order_line_id_stmt);
+            $row = oci_fetch_assoc($order_line_id_stmt);
+            $order_line_id = $row['ORDER_LINE_ID'];
+
+            $stmt = oci_parse($conn, $sqlQuerySecond);
+            oci_bind_by_name($stmt, ':order_line_id', $order_line_id);
+            oci_bind_by_name($stmt, ':order_id', $order_id);
+            oci_bind_by_name($stmt, ':product_id', $product['PRODUCT_ID']);
+            oci_bind_by_name($stmt, ':quantity', $quantity);
+            oci_bind_by_name($stmt, ':price', $product['PRODUCT_PRICE']);
+            oci_execute($stmt,OCI_NO_AUTO_COMMIT);
+        }
+
+        // Commit the transaction
+        oci_commit($conn);
+
+        return ["order_id" => $order_id];
+    } catch (Exception $e) {
+        // Rollback in case of error
+        oci_rollback($conn);
+        createLog($e->getMessage());
+        return null;
+    } finally {
+        CloseConn($conn);
+    }
+
+}
 function createOrder($order_price, $user_id, $cart){
     $sqlQueryFirst = "INSERT INTO orders(order_price, user_id) 
             VALUES (?, ?)";

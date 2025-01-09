@@ -367,7 +367,7 @@ function retrieveEmployee($employeeID) {
 }
 
 function updateCustomerContact($customerID, $contact){
-    $sql = "UPDATE CUSTOMERS SET address = :address, CITY = :city, state = :state, PHONE = :phone
+    $sql = "UPDATE CUSTOMERS SET address = :address, CITY = :city, state = :state, PHONE = :phone, POSTCODE = :postcode
             WHERE customer_id = ?";
 
     $conn = OpenConn();
@@ -378,6 +378,7 @@ function updateCustomerContact($customerID, $contact){
         oci_bind_by_name($stmt, ':city', $contact["city"]);
         oci_bind_by_name($stmt, ':state', $contact["state"]);
         oci_bind_by_name($stmt, ':phone', $contact["phone"]);
+        oci_bind_by_name($stmt, ':postcode', $contact["postcode"]);
 
         if (!oci_execute($stmt)) {
             throw new Exception(oci_error($stmt)['message']);
@@ -395,7 +396,8 @@ function updateCustomerContact($customerID, $contact){
         }
         CloseConn($conn);
 
-        die("Error: unable to update customer contact details!");
+        makeToast("error", "Unable to update customer contact details!", "Error");
+        return false;
     }
 }
 

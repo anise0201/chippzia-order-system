@@ -10,43 +10,49 @@ $user = $_SESSION["user_data"];
 if (!array_keys_isempty_or_not(["user_address", "user_postcode", "user_city",
     "user_phone", "state_code"], $user)){
     makeToast("info", "You must fill in all the contact details before you are allowed to order!", "Info");
-    header("Location: /account/profile.php");
+    header("Location: ".BASE_URL."account/profile.php");
     die();
 }
-$_SESSION["user_data"] = $user;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $postedToken = $_POST["token"];
     try{
         if(!empty($postedToken)){
             if(isTokenValid($postedToken)){
-                $user = retrieveUser($_SESSION["user_data"]["user_id"]);
-                $userID = $user["user_id"];
+                //TODO: Change the calculation later (include the option to use loyalty points)
+                $user = retrieveMember($_SESSION["user_data"]["CUSTOMER_ID"]);
+                $customerID = $user["CUSTOMER_ID"];
                 $cart = $_SESSION["cart"];
                 $cost = 0;
                 foreach ($cart as $item){
                     $quantity = $item["quantity"];
-                    $cost += $item["product"]["product_price"] * $quantity;
+                    $cost += $item["product"]["PRODUCT_PRICE"] * $quantity;
                 }
                 $totalCost = $cost + 5;
                 //process
-                $order = createOrder($totalCost, $userID, $cart) or throw new Exception("Something went terribly 
-                wrong during the ordering process!<br>Please contact the administrator!");
-                $_SESSION["orderID"] = $order["order_id"];
+                $order = createOrderMember($totalCost, $customerID, $cart);
+
+                if (isset($order)) {
+                    makeToast("success", "Your order has been placed!", "Success");
+                    $_SESSION["ORDER_ID"] = $order["ORDER_ID"];
+                }
+                else {
+                    throw new Exception("Something went terribly wrong during the ordering process!<br>Please contact the administrator!");
+                }
             }
             else{
                 makeToast("warning", "Please refrain from attempting to resubmit previous form", "Warning");
             }
         }
         else {
-            throw new exception("Token not found");
+            throw new Exception("Token not found");
         }
     }
     catch (exception $e){
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /order/confirm.php");
+    header("Location: ".BASE_URL."order/confirm.php");
     die();
 }
 
@@ -55,9 +61,9 @@ displayToast();
 
 try{
     $cart = $_SESSION["cart"] or throw new Exception();
-}catch (Exception) {
+} catch (Exception) {
     makeToast("warning", "You cannot checkout with an empty cart!", "Warning");
-    header("Location: /index.php");
+    header("Location: ".BASE_URL."index.php");
     die();
 }
 
@@ -69,8 +75,8 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
-    <link rel="stylesheet" href="/assets/css/progress.css">
-    <title>Kerepek Funz | Shopping Cart</title>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/progress.css">
+    <title><?= WEBSITE_NAME ?> | Shopping Cart</title>
 </head>
 <style>
 	.icon-container {
@@ -107,7 +113,7 @@ $token = getToken();
                                         <div class="row">
                                           <div class="col-75">
                                             <div class="container">
-                                              <form action="/action_page.php">
+                                              <form>
 
                                                 <div class="row">
                                                   <div class="col-50">

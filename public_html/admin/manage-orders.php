@@ -21,32 +21,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     //notify user here via mail
                     require_once("../../mail.inc.php");
                     $order = retrieveOrderSpecific($orderID);
-                    $fullName = $order["user_fname"]." ".$order["user_lname"];
+                    $fullName = $order["FIRST_NAME"]." ".$order["LAST_NAME"];
 
-                    $orderCode = sprintf("%08d", $order["order_id"]);
-                    $date = date_create($order["date_created"]);
+                    $orderCode = sprintf("%08d", $order["ORDER_ID"]);
+                    $date = date_create($order["CREATED_AT"]);
                     $dateFormatted = date_format($date, "d M Y");
 
                     $subject = "";
                     $content = "";
+                    $website_name = WEBSITE_NAME;
                     if ($orderStatus === "PENDING"){
                         $subject = "Your Order #{$orderCode} is Pending Confirmation";
                         $content = "
-                        <p>Thank you for choosing Kerepek Funz for your snack cravings! We have received your order and it is currently being processed. Please note that your payment is pending verification.</p>
+                        <p>Thank you for choosing {$website_name} for your snack cravings! We have received your order and it is currently being processed. Please note that your payment is pending verification.</p>
                         <p><strong>Order Details:</strong></p>
                         <ul>
                             <li>Order Code: #{$orderCode}</li>
                             <li>Order Date: {$dateFormatted}</li>
                         </ul>
                         <p>We are working diligently to confirm your payment and process your order. Once the payment is verified, we will proceed with packing and shipping your delicious snacks. You will receive a confirmation email with the shipment details.</p>
-                        <p>If you have any questions or need further assistance, please feel free to reach out to our customer support team at <a href='mailto:kerepekfunz5@gmail.com'>Kerepek Funz Customer Support Team</a>.</p>
+                        <p>If you have any questions or need further assistance, please feel free to reach out to our customer support team at <a href='mailto:kerepekfunz5@gmail.com'>{$website_name} Customer Support Team</a>.</p>
                         <p>Thank you for your patience!</p>";
                     }
                     else if ($orderStatus === "COMPLETED") {
                         $estimatedDeliveryDate = date('d M Y', strtotime("+10 day"));
                         $subject = "Your Order #{$orderCode} is Complete - Enjoy Your Snacks!";
                         $content = "
-                        <p>Hooray! Your order from Kerepek Funz has been successfully processed and shipped. Your delicious snacks are on their way to you!</p>
+                        <p>Hooray! Your order from {$website_name} has been successfully processed and shipped. Your delicious snacks are on their way to you!</p>
                         <p><strong>Order Details:</strong></p>
                         <ul>
                             <li>Order Code: #{$orderCode}</li>
@@ -54,20 +55,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <li>Estimated Delivery Date: {$estimatedDeliveryDate}</li>
                         </ul>
                         <p>We want you to have the best snacking experience, so please make sure to keep an eye out for your package. Once it arrives, indulge in the mouthwatering flavors of our premium snacks.</p>
-                        <p>We hope you enjoy every bite! If you have any feedback or questions about your order, please don't hesitate to contact our friendly customer support team at <a href='mailto:kerepekfunz5@gmail.com'>Kerepek Funz Customer Support Team</a>.</p>
-                        <p>Thank you for choosing Kerepek Funz!</p>";
+                        <p>We hope you enjoy every bite! If you have any feedback or questions about your order, please don't hesitate to contact our friendly customer support team at <a href='mailto:kerepekfunz5@gmail.com'>{$website_name} Customer Support Team</a>.</p>
+                        <p>Thank you for choosing {$website_name}!</p>";
                     }
                     else if ($orderStatus === "CANCELLED") {
                         $subject = "Important: Your Order #{$orderCode} has been Cancelled";
                         $content = "
-                         <p>We regret to inform you that your order with Kerepek Funz has been cancelled. We apologize for any inconvenience caused.</p>
+                         <p>We regret to inform you that your order with {$website_name} has been cancelled. We apologize for any inconvenience caused.</p>
                         <p><strong>Order Details:</strong></p>
                         <ul>
                             <li>Order Code: #{$orderCode}</li>
                             <li>Order Date: {$dateFormatted}</li>
                         </ul>
                         <p>Due to unforeseen circumstances, we were unable to fulfill your order as requested. Rest assured that any payment made for the cancelled order will be refunded to your original payment method.</p>
-        <p>If you have any questions or concerns about the cancellation, please reach out to our customer support team at <a href='mailto:kerepekfunz5@gmail.com'>Kerepek Funz Customer Support Team</a>. We value your satisfaction and would be happy to assist you.</p>
+        <p>If you have any questions or concerns about the cancellation, please reach out to our customer support team at <a href='mailto:kerepekfunz5@gmail.com'>{$website_name} Customer Support Team</a>. We value your satisfaction and would be happy to assist you.</p>
         <p>Once again, we apologize for the cancellation and any inconvenience caused. We hope to have the opportunity to serve you better in the future.</p>";
                     }
                     else {
@@ -77,9 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $body = "<h1>Dear {$fullName},</h1>
                              {$content}
                              <p>Sincerely,</p>
-                             <p>Kerepek Funz Team</p>";
+                             <p>{$website_name} Team</p>";
 
-                    sendMail($order["user_email"], $subject, $body) or throw new Exception("Message wasn't sent!");;
+                    sendMail($order["EMAIL"], $subject, $body) or throw new Exception("Message wasn't sent!");;
 
                     makeToast("success", "Order successfully updated!", "Success");
                 }
@@ -119,7 +120,7 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Manage Orders</title>
+    <title><?= WEBSITE_NAME ?>| Manage Orders</title>
 </head>
 <body>
 <div class="container-fluid">

@@ -139,8 +139,8 @@ function deleteProduct($productID) {
 //TODO: New schema, this code is no longer applicable. Will need changing soon! Product code does not exist
 // Inventory Quantity needed too
 function createProduct($productName, $productImage, $productPrice) {
-    $sql = "INSERT INTO products(product_name, product_image, product_price) 
-            VALUES (:product_name, :product_image, :product_price)";
+    $sql = "INSERT INTO products(PRODUCT_ID, PRODUCT_NAME, product_image, product_price) 
+            VALUES (PRODUCT_SEQ.nextval, :product_name, :product_image, :product_price)";
     $conn = OpenConn();
 
     try {

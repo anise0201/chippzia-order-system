@@ -6,20 +6,21 @@ require("../../includes/functions.inc.php");
 member_login_required();
 
 displayToast();
-//cart no longer need
+//cart no longer needed, unset it
 unset($_SESSION["cart"]);
 
 
 $user = $_SESSION["user_data"];
-$orderID = $_SESSION["orderID"];
+$orderID = $_SESSION["ORDER_ID"];
 
 $order = retrieveOrderSpecific($orderID);
-$totalCost = $order["order_price"];
+$totalCost = $order["TOTAL_PRICE"];
 
 $orderCode = sprintf('%08d', $orderID);
 $date = date_create($order["date_created"]);
 $date = date_format($date, "d M Y");
 
+//TODO: Change calculation process
 $subTotal = number_format(($totalCost - 5), 2, ".", ",");
 $total = number_format(($totalCost), 2, ".", ",");
 ?>
@@ -28,9 +29,9 @@ $total = number_format(($totalCost), 2, ".", ",");
 
 <head>
     <?php head_tag_content(); ?>
-    <link rel="stylesheet" href="/assets/css/progress.css">
-    <link rel="stylesheet" href="/assets/css/invoice.css">
-    <title>Kerepek Funz | Order Completed</title>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/progress.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/invoice.css">
+    <title><?= WEBSITE_NAME ?> | Order Completed</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -67,7 +68,7 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                     <table>
                                                         <tr>
                                                             <td class="title">
-                                                                <img src="/assets/images/icon2.jpg" style="width: 100%; max-width: 200px; object-fit: contain;" />
+                                                                <img src="<?= BASE_URL ?>assets/images/logo2.jpg" style="width: 100%; max-width: 200px; object-fit: contain;" />
                                                             </td>
 
                                                             <td>
@@ -91,9 +92,9 @@ $total = number_format(($totalCost), 2, ".", ",");
                                                             </td>
 
                                                             <td>
-                                                                <?= ($user["user_fname"] . " " . $user["user_lname"]) ?><br />
-                                                                <?= $user["user_email"] ?><br />
-                                                                <?= $user["user_phone"] ?? "-" ?>
+                                                                <?= ($user["FIRST_NAME"] . " " . $user["LAST_NAME"]) ?><br />
+                                                                <?= $user["EMAIL"] ?><br />
+                                                                <?= $user["PHONE"] ?? "-" ?>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -119,10 +120,10 @@ $total = number_format(($totalCost), 2, ".", ",");
                                             <?php
                                             $orderLines = retrieveAllOrderLines($orderID);
                                             foreach ($orderLines as $item) {
-                                                $cost = $item["product_price"] * $item["quantity"];
+                                                $cost = $item["PRICE"] * $item["QUANTITY"];
                                                 $cost = number_format($cost, 2);
                                                 echo "<tr class='item'>
-                                                    <td>{$item["product_name"]} ({$item["product_price"]}) x{$item["quantity"]}</td>
+                                                    <td>{$item["PRODUCT_NAME"]} ({$item["PRICE"]}) x{$item["QUANTITY"]}</td>
                                                     <td>RM{$cost}</td>
                                                 </tr>";
                                             }

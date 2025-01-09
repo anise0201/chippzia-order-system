@@ -10,11 +10,11 @@ if (isset($_GET["q"])){
     $query = htmlspecialchars($_GET["q"]);
 
     $products = retrieveAllProductLike($query);
-    $users = retrieveAllUserLike($query);
+    $customers = retrieveAllCustomers();
 }
 else {
     makeToast("Warning", "Query was not found!", "Warning");
-    header("Location: /admin/dashboard.php");
+    header("Location: ".BASE_URL."admin/dashboard.php");
     die();
 }
 
@@ -25,7 +25,7 @@ displayToast();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Search Result</title>
+    <title><?= WEBSITE_NAME ?> | Search Result</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -59,18 +59,19 @@ displayToast();
                                 </thead>
                                 <tbody>
                                 <?php
+                                $base_url = BASE_URL;
                                 if ($products != null){
                                     $productCount = 0;
                                     foreach ($products as $product){
-                                        $price = number_format((float)$product["product_price"], 2, ".", ",");
+                                        $price = number_format((float)$product["PRODUCT_PRICE"], 2, ".", ",");
                                         echo "
                                             <tr class='align-middle'>
-                                                <th scope='row'>{$product["product_code"]}</th>
-                                                <td><img class='img-fluid w-100' src='{$product["product_image"]}' style='max-width: 200px;'></td>
-                                                <td>{$product["product_name"]}</td>
+                                                <th scope='row'>{$product["PRODUCT_ID"]}</th>
+                                                <td><img class='img-fluid w-100' src='{$product["PRODUCT_IMAGE"]}' style='max-width: 200px;'></td>
+                                                <td>{$product["PRODUCT_NAME"]}</td>
                                                 <td>RM{$price}</td>
                                                 <td class='text-center'>
-                                                    <a type='button' class='btn btn-outline-primary' href='/admin/manage-products.php/#{$product["product_id"]}'>
+                                                    <a type='button' class='btn btn-outline-primary' href='{$base_url}admin/manage-products.php/#{$product["PRODUCT_ID"]}'>
                                                         See More
                                                     </a>                                       
                                                 </td>
@@ -98,52 +99,35 @@ displayToast();
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Username</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Address</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Phone</th>
-                                    <th scope="col">Type</th>
                                     <th scope="col">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php
-                                if ($users != null){
+                                $base_url = BASE_URL;
+                                if ($customers != null){
                                     $userCount = 0;
-                                    foreach ($users as $user){
-                                        $fullName = $user["user_fname"] . " " . $user["user_lname"];
+                                    foreach ($customers as $customer){
+                                        $fullName = $customer["FIRST_NAME"] . " " . $customer["LAST_NAME"];
 
-                                        $address = ($user["user_address"] ?? "") . ", " . ($user["user_postcode"] ?? "")
-                                            . ", " . ($user["user_city"] ?? "") . ", " . ($user["state_name"] ?? "");
-                                        $phone = $user["user_phone"] ?? "-";
-                                        $type = $user["user_type"];
-                                        $userType = "";
-
-                                        if ($type === "customer"){
-                                            $userType = "Customer User";
-                                        }
-                                        else if ($type === "admin") {
-                                            $address = "-";
-                                            $phone = "-";
-                                            $userType = "Admin User";
-                                        }
-                                        else {
-                                            continue;
-                                        }
+                                        $address = ($customer["ADDRESS"] ?? "") . ", " . ($customer["POSTCODE"] ?? "")
+                                            . ", " . ($customer["CITY"] ?? "") . ", " . ($customer["STATE"] ?? "");
+                                        $phone = $customer["PHONE"] ?? "-";
 
                                         $count = $userCount + 1;
                                         echo
                                         "<tr class='align-middle'>
                                             <th scope='row'>$count</th>
-                                            <td>{$user["username"]}</td>
                                             <td>{$fullName}</td>
                                             <td>{$address}</td>
-                                            <td>{$user["user_email"]}</td>
+                                            <td>{$customer["EMAIL"]}</td>
                                             <td>{$phone}</td>
-                                            <td>{$userType}</td>
                                             <td class='text-center'>
-                                                <a type='button' class='btn btn-outline-primary' href='/admin/manage-users.php/#{$user["user_id"]}'>
+                                                <a type='button' class='btn btn-outline-primary' href='{$base_url}admin/manage-users.php/#{$customer["CUSTOMER_ID"]}'>
                                                     See More
                                                 </a>                                       
                                             </td>

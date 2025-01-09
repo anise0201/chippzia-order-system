@@ -11,11 +11,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try{
         if(!empty($postedToken)){
             if(isTokenValid($postedToken)){
-                //delete user todo
-                if (isset($_POST["delete"])) {
-                    $userID = htmlspecialchars($_POST["user_id"]);
-                    deleteUser($userID) or throw new Exception("User wasn't able to be deleted!");
+                //delete member todo
+//                if (isset($_POST["delete"])) {
+//                    $userID = htmlspecialchars($_POST["user_id"]);
+//                    deleteUser($userID) or throw new Exception("User wasn't able to be deleted!");
+//                    makeToast("success", "Account successfully deleted!", "Success");
+//                }
+                if (isset($_POST["delete_member"])) {
+                    $customerID = htmlspecialchars($_POST["customer_id"]);
+                    deleteCustomer($customerID) or throw new Exception("Customer wasn't able to be deleted!");
                     makeToast("success", "Account successfully deleted!", "Success");
+                }
+                else if (isset($_POST["delete_employee"])) {
+                    $employeeID = htmlspecialchars($_POST["employee_id"]);
+                    deleteEmployees($employeeID) or throw new Exception("Employee wasn't able to be deleted!");
+                    makeToast("success", "Employee successfully deleted!", "Success");
                 }
                 //create admin todo
                 else if (isset($_POST["admin"])) {
@@ -24,8 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $username = htmlspecialchars($_POST["username"]);
                     $email = htmlspecialchars($_POST["email"]);
                     $password = htmlspecialchars($_POST["password"]);
+                    $managerID = htmlspecialchars($_POST["manager_id"]);
 
-                    createUser($fname, $lname, $username, $password, $email, "admin") or throw new Exception("Admin user wasn't able to be created!");
+                    createEmployee($fname, $lname, $email, null, $username, $password, $managerID) or throw new Exception("Employee account wasn't able to be created!");
                     makeToast("success", "Admin account successfully created!", "Success");
                 }
             }
@@ -41,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         makeToast("error", $e->getMessage(), "Error");
     }
 
-    header("Location: /admin/manage-users.php");
+    header("Location: ".BASE_URL."admin/manage-users.php");
     die();
 }
 
@@ -61,7 +72,7 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
-    <title>Kerepek Funz | Manage Users</title>
+    <title><?= WEBSITE_NAME ?> | Manage Users</title>
 </head>
 <body>
 <div class="container-fluid">

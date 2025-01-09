@@ -18,10 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $contact = ["address"=>htmlspecialchars($_POST["address"]), "postcode"=>htmlspecialchars($_POST["postcode"]),
                     "city"=>htmlspecialchars($_POST["city"]), "state_code"=>htmlspecialchars($_POST["state"]),
                     "phone"=>htmlspecialchars($_POST["phone"])];
-                $userID = $_SESSION["user_data"]["CUSTOMER_ID"];
+                $customerID = $_SESSION["user_data"]["CUSTOMER_ID"];
 
                 //TODO: Change this later
-                if (updateContact($userID, $contact)){
+                if (updateCustomerContact($customerID, $contact)){
                     makeToast('success', "Contact info is successfully updated!", "Success");
                 }
                 else{

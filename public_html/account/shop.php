@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $duplicateItem = null;
                 foreach ($cart as $itemKey => $itemValue){
                     //match
-                    if ($itemValue["product"]["product_id"] == $product["product_id"]){
+                    if ($itemValue["product"]["PRODUCT_ID"] == $product["PRODUCT_ID"]){
                         $duplicateItem = $itemValue;
                         unset($cart[$itemKey]);
                         break;

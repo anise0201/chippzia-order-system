@@ -54,8 +54,8 @@ $token = getToken();
 
 <head>
     <?php head_tag_content(); ?>
-    <link rel="stylesheet" href="/assets/css/progress.css">
-    <title>Kerepek Funz | Shopping Cart</title>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/progress.css">
+    <title><?= WEBSITE_NAME ?> | Shopping Cart</title>
 </head>
 <body>
 <div class="container-fluid">
@@ -89,9 +89,9 @@ $token = getToken();
                                     foreach ($cart as $item) {
                                         $product = $item["product"];
                                         $quantity = $item["quantity"];
-                                        $cost += $product["product_price"] * $quantity;
+                                        $cost += $product["PRODUCT_PRICE"] * $quantity;
                                         //price
-                                        $productCost = number_format((float)$product["product_price"], 2, '.', '');
+                                        $productCost = number_format((float)$product["PRODUCT_PRICE"], 2, '.', '');
 
                                         if ($count % 4 == 0) {
                                             echo "<div class='row'>";
@@ -101,18 +101,18 @@ $token = getToken();
 <div class='card p-3 mb-3'>
 <div class='row g-0'>
     <div class='col-md-4'>
-        <img src='{$product["product_image"]}' class='object-fit-fill card-img-top' alt='Product Image'>
+        <img src='{$product["PRODUCT_IMAGE"]}' class='object-fit-fill card-img-top' alt='Product Image'>
     </div>
     <div class='col-md-8'>
         <div class='card-body'>
-            <h5 class='card-title'>{$product["product_name"]}</h5>
-            <p class='card-text'>Product Code: {$product["product_code"]}</p>
+            <h5 class='card-title'>{$product["PRODUCT_NAME"]}</h5>
+            <p class='card-text'>Product Code: {$product["PRODUCT_ID"]}</p>
            
             <p class='card-text'>Price: RM{$productCost}</p>
             
             <span class='card-detail'>Quantity: {$quantity}</span>
             <form action='/order/cart.php' method='post'>     
-                <input type='hidden' name='product_id' value='{$product["product_id"]}'>
+                <input type='hidden' name='product_id' value='{$product["PRODUCT_ID"]}'>
                 <input type='hidden' name='token' value='$token'>
                 <button type='submit' class='btn btn-dark text-white float-end'><i class='bi bi-trash'></i> Remove from Cart</button>
             </form>
@@ -178,7 +178,7 @@ $token = getToken();
                         </div>
 
                         <div class="row mt-4 px-4">
-                            <a type="button" class="btn btn-outline-primary" href="/order/checkout.php">Check-out</a>
+                            <a type="button" class="btn btn-outline-primary" href="<?= BASE_URL ?>order/checkout.php">Check-out</a>
                         </div>
                     </div>
                 </div>
